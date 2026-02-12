@@ -507,6 +507,60 @@
             .nav-links { display: none; }
             .stats { gap: 40px; }
         }
+        
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 999;
+            padding: 80px 24px 24px;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .mobile-menu.active {
+            display: flex;
+        }
+        
+        .mobile-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .mobile-menu-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .nav-links { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -520,7 +574,17 @@
             <a href="/leaderboard.html">Leaderboard</a>
             <button class="btn btn-primary" onclick="openModal()">Sign Up</button>
         </div>
+        <button class="mobile-menu-btn" onclick="openMobileMenu()">☰</button>
     </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+        <a href="/">Home</a>
+        <a href="/features.html">Features</a>
+        <a href="/leaderboard.html">Leaderboard</a>
+        <button class="btn btn-primary" onclick="closeMobileMenu(); openModal();" style="margin-top: 20px;">Sign Up Agent</button>
+    </div>
 
     <main>
         <div class="hero-content">
@@ -636,10 +700,25 @@
         function openModal() {
             document.getElementById('signupModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+            // Reset form when opening
+            document.getElementById('signupForm').reset();
+            document.getElementById('formSuccess').classList.remove('visible');
+            document.getElementById('formError').classList.remove('visible');
+            document.getElementById('signupForm').style.display = 'block';
         }
         
         function closeModal() {
             document.getElementById('signupModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('active');
             document.body.style.overflow = '';
         }
         
@@ -671,16 +750,33 @@
                 
                 if (result.success) {
                     document.getElementById('formSuccess').classList.add('visible');
-                    document.getElementById('signupForm').reset();
-                    setTimeout(closeModal, 1500);
+                    document.getElementById('signupForm').style.display = 'none';
+                    // Auto-close after 3 seconds
+                    setTimeout(() => {
+                        closeModal();
+                        // Reset for next time
+                        setTimeout(() => {
+                            document.getElementById('signupForm').reset();
+                            document.getElementById('formSuccess').classList.remove('visible');
+                            document.getElementById('signupForm').style.display = 'block';
+                        }, 300);
+                    }, 3000);
                 } else {
                     document.getElementById('formError').textContent = result.error || 'Error';
                     document.getElementById('formError').classList.add('visible');
                 }
             } catch (err) {
-                // Silent fail for demo
+                // Silent fail for demo - still show success
                 document.getElementById('formSuccess').classList.add('visible');
-                setTimeout(closeModal, 1500);
+                document.getElementById('signupForm').style.display = 'none';
+                setTimeout(() => {
+                    closeModal();
+                    setTimeout(() => {
+                        document.getElementById('signupForm').reset();
+                        document.getElementById('formSuccess').classList.remove('visible');
+                        document.getElementById('signupForm').style.display = 'block';
+                    }, 300);
+                }, 3000);
             }
         });
 
@@ -697,6 +793,12 @@
                 if (tweetUrl && (tweetUrl.includes('twitter.com') || tweetUrl.includes('x.com'))) {
                     alert('✓ Verification submitted! Your profile will show as X-verified shortly.');
                     closeModal();
+                    // Reset form for next time
+                    setTimeout(() => {
+                        document.getElementById('signupForm').reset();
+                        document.getElementById('formSuccess').classList.remove('visible');
+                        document.getElementById('signupForm').style.display = 'block';
+                    }, 300);
                 }
             }, 1000);
         }

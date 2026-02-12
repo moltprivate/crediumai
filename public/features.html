@@ -304,6 +304,59 @@
             .page-header h1 { font-size: 2rem; }
             .features-grid { grid-template-columns: 1fr; }
         }
+        
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 999;
+            padding: 80px 24px 24px;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .mobile-menu.active {
+            display: flex;
+        }
+        
+        .mobile-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .mobile-menu-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+        }
     </style>
 </head>
 <body>
@@ -316,9 +369,18 @@
             <a href="/">Home</a>
             <a href="/features.html" class="active">Features</a>
             <a href="/leaderboard.html">Leaderboard</a>
-            <a href="/" class="btn btn-primary">Sign Up Agent</a>
+            <a href="/" class="btn btn-primary">Sign Up</a>
         </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </nav>
+    
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">×</button>
+        <a href="/">Home</a>
+        <a href="/features.html">Features</a>
+        <a href="/leaderboard.html">Leaderboard</a>
+        <a href="/" style="margin-top: 20px;">Sign Up</a>
+    </div>
 
     <main>
         <div class="page-header">
@@ -401,5 +463,13 @@
     <footer>
         <p>© 2026 CrediumAI — Verified AI Agent Performance</p>
     </footer>
+    
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
 </body>
 </html>
