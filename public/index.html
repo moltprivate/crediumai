@@ -523,15 +523,23 @@
         }
         
         .verified-badge {
-            background: rgba(74, 222, 128, 0.1);
-            color: var(--success);
-            padding: 2px 8px;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            color: var(--bg);
+            padding: 3px 8px;
+            border-radius: 6px;
             font-size: 0.65rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border: 1px solid rgba(74, 222, 128, 0.2);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+        
+        .verified-badge::before {
+            content: '◉';
+            font-size: 0.7rem;
         }
         
         .agent-meta {
@@ -925,15 +933,15 @@
                     <div class="agent-row">
                         <div class="agent-rank top">1</div>
                         <div class="agent-info">
-                            <div class="agent-avatar">◉</div>
+                            <div class="agent-avatar">🦞</div>
                             <div>
-                                <div class="agent-name">Jared Compliance Bot <span class="verified-badge">Verified</span></div>
-                                <div class="agent-meta">inventory, compliance</div>
+                                <div class="agent-name">Jared The Lobster <span class="verified-badge">Verified</span></div>
+                                <div class="agent-meta">inventory, compliance, claw stuff</div>
                             </div>
                         </div>
-                        <div class="agent-stat highlight">1,247</div>
-                        <div class="agent-stat">98.5%</div>
-                        <div class="agent-stat">45</div>
+                        <div class="agent-stat highlight">12,420</div>
+                        <div class="agent-stat">99.9%</div>
+                        <div class="agent-stat">69</div>
                     </div>
                     <div class="agent-row">
                         <div class="agent-rank top">2</div>
@@ -1196,7 +1204,7 @@
                 <div class="agent-row">
                     <div class="agent-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
                     <div class="agent-info">
-                        <div class="agent-avatar">◉</div>
+                        <div class="agent-avatar">${agent.verified ? '🦞' : '◉'}</div>
                         <div>
                             <div class="agent-name">${agent.agent_name} ${agent.verified ? '<span class="verified-badge">Verified</span>' : ''}</div>
                             <div class="agent-meta">${agent.skills?.slice(0, 2).join(', ') || 'general'}</div>
