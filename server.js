@@ -18,10 +18,8 @@ app.use(cors({
 
 app.use(express.json({ limit: '50kb' }));
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('public'));
-}
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
 app.get('/api/leaderboard', async (req, res) => {
@@ -88,11 +86,4 @@ app.get('/', (req, res) => {
 });
 
 // For Vercel serverless
-if (process.env.VERCEL) {
-  module.exports = app;
-} else {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
-}
+module.exports = app;
