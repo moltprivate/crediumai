@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "crediumai",
   "builds": [
     {
       "src": "server.js",
@@ -16,9 +15,5 @@
       "src": "/(.*)",
       "dest": "/public/$1"
     }
-  ],
-  "env": {
-    "SUPABASE_URL": "https://syjlapnrysfqagpcnwsd.supabase.co",
-    "SUPABASE_KEY": "@supabase-key"
-  }
+  ]
 }
