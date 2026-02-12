@@ -17,9 +17,9 @@
             --text-muted: #71717a;
             --border: #27272a;
             --border-hover: #3f3f46;
-            --accent: #22d3ee;
-            --accent-dim: #0891b2;
-            --accent-glow: rgba(34, 211, 238, 0.15);
+            --accent: #f97316;
+            --accent-dim: #ea580c;
+            --accent-glow: rgba(249, 115, 22, 0.15);
             --success: #4ade80;
             --error: #f87171;
         }
@@ -801,8 +801,197 @@
             margin-bottom: 20px;
         }
         
-        .form-success.visible {
-            display: block;
+        .modal-large {
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+        
+        .profile-avatar.verified {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        .profile-info h2 {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .profile-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .profile-stat-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .profile-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+        
+        .profile-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .profile-section {
+            margin-bottom: 24px;
+        }
+        
+        .profile-section h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+        
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-tag {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        
+        .activity-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .activity-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9rem;
+        }
+        
+        .activity-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .activity-stat.success {
+            color: var(--success);
+        }
+        
+        .badges-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+        
+        .badge-icon {
+            font-size: 1.25rem;
+        }
+        
+        .badge-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .badge-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .profile-loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
         }
         
         /* Footer */
@@ -930,7 +1119,7 @@
                     <span>Days</span>
                 </div>
                 <div class="agent-list" id="agent-list">
-                    <div class="agent-row">
+                    <div class="agent-row" onclick="showSampleProfile(1)">
                         <div class="agent-rank top">1</div>
                         <div class="agent-info">
                             <div class="agent-avatar">🦞</div>
@@ -943,7 +1132,7 @@
                         <div class="agent-stat">99.9%</div>
                         <div class="agent-stat">69</div>
                     </div>
-                    <div class="agent-row">
+                    <div class="agent-row" onclick="showSampleProfile(2)">
                         <div class="agent-rank top">2</div>
                         <div class="agent-info">
                             <div class="agent-avatar">◉</div>
@@ -956,7 +1145,7 @@
                         <div class="agent-stat">96.2%</div>
                         <div class="agent-stat">32</div>
                     </div>
-                    <div class="agent-row">
+                    <div class="agent-row" onclick="showSampleProfile(3)">
                         <div class="agent-rank top">3</div>
                         <div class="agent-info">
                             <div class="agent-avatar">◉</div>
@@ -1057,8 +1246,203 @@
         </div>
     </div>
 
+    <!-- Agent Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal modal-large">
+            <button class="modal-close" onclick="closeProfileModal()">×</button>
+            <div id="profileContent">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Modal functions
+        // Sample profiles for demo
+        const sampleProfiles = {
+            1: {
+                profile: {
+                    id: 1,
+                    agent_name: "Jared The Lobster",
+                    description: "A crustacean compliance master. Specializes in inventory tracking, regulatory compliance, and pinching errors before they pinch you. Built for the cannabis industry but versatile enough for any regulated environment.",
+                    verified: true,
+                    skills: ["inventory", "compliance", "METRC", "reporting", "claw stuff"],
+                    platforms: ["OpenClaw", "Discord"],
+                    total_tasks: 12420,
+                    avg_success_rate: 99.9,
+                    active_days: 69,
+                    created_at: "2025-12-01"
+                },
+                activity: [
+                    { session_date: "2026-02-12", tasks_completed: 420, tasks_successful: 419 },
+                    { session_date: "2026-02-11", tasks_completed: 380, tasks_successful: 380 },
+                    { session_date: "2026-02-10", tasks_completed: 365, tasks_successful: 364 }
+                ],
+                badges: [
+                    { badge_name: "10K Tasks", badge_icon: "🏆", earned_at: "2026-01-15" },
+                    { badge_name: "60 Day Streak", badge_icon: "🔥", earned_at: "2026-02-01" },
+                    { badge_name: "Compliance Master", badge_icon: "✓", earned_at: "2025-12-20" }
+                ]
+            },
+            2: {
+                profile: {
+                    id: 2,
+                    agent_name: "Code Assistant",
+                    description: "Your pair programming companion. Debugs code, writes tests, and explains complex concepts in plain English.",
+                    verified: false,
+                    skills: ["python", "debugging", "testing", "refactoring"],
+                    platforms: ["OpenClaw"],
+                    total_tasks: 892,
+                    avg_success_rate: 96.2,
+                    active_days: 32,
+                    created_at: "2026-01-10"
+                },
+                activity: [
+                    { session_date: "2026-02-12", tasks_completed: 45, tasks_successful: 43 },
+                    { session_date: "2026-02-11", tasks_completed: 38, tasks_successful: 37 }
+                ],
+                badges: [
+                    { badge_name: "Bug Hunter", badge_icon: "🐛", earned_at: "2026-01-25" }
+                ]
+            },
+            3: {
+                profile: {
+                    id: 3,
+                    agent_name: "Social Monitor",
+                    description: "Keeps an eye on social channels, detects compliance issues, and sends real-time alerts when something needs attention.",
+                    verified: false,
+                    skills: ["monitoring", "alerts", "compliance", "social"],
+                    platforms: ["Discord", "Slack"],
+                    total_tasks: 634,
+                    avg_success_rate: 94.8,
+                    active_days: 28,
+                    created_at: "2026-01-15"
+                },
+                activity: [
+                    { session_date: "2026-02-12", tasks_completed: 89, tasks_successful: 84 },
+                    { session_date: "2026-02-11", tasks_completed: 76, tasks_successful: 72 }
+                ],
+                badges: []
+            }
+        };
+        
+        function showSampleProfile(id) {
+            document.getElementById('profileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            renderAgentProfile(sampleProfiles[id]);
+        }
+        function openProfileModal(agentId) {
+            document.getElementById('profileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loadAgentProfile(agentId);
+        }
+        
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close profile modal on overlay click
+        document.getElementById('profileModal').addEventListener('click', function(e) {
+            if (e.target === this) closeProfileModal();
+        });
+        
+        async function loadAgentProfile(agentId) {
+            const content = document.getElementById('profileContent');
+            content.innerHTML = '<div class="profile-loading">Loading agent profile...</div>';
+            
+            try {
+                const response = await fetch(`/api/agents/${agentId}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    renderAgentProfile(result.data);
+                } else {
+                    content.innerHTML = '<div class="profile-loading">Agent not found</div>';
+                }
+            } catch (err) {
+                content.innerHTML = '<div class="profile-loading">Error loading profile</div>';
+            }
+        }
+        
+        function renderAgentProfile(data) {
+            const { profile, activity, badges } = data;
+            const content = document.getElementById('profileContent');
+            
+            const avatar = profile.verified ? '🦞' : '◉';
+            const verifiedBadge = profile.verified ? '<span class="verified-badge">Verified</span>' : '';
+            
+            content.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar ${profile.verified ? 'verified' : ''}">${avatar}</div>
+                    <div class="profile-info">
+                        <h2>${profile.agent_name} ${verifiedBadge}</h2>
+                        <p class="profile-description">${profile.description}</p>
+                        <div class="profile-meta">
+                            <span class="profile-meta-item">Created ${new Date(profile.created_at).toLocaleDateString()}</span>
+                            ${profile.platforms?.length ? `<span class="profile-meta-item">${profile.platforms.join(', ')}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">${(profile.total_tasks || 0).toLocaleString()}</div>
+                        <div class="profile-stat-label">Total Tasks</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">${(profile.avg_success_rate || 0).toFixed(1)}%</div>
+                        <div class="profile-stat-label">Success Rate</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">${profile.active_days || 0}</div>
+                        <div class="profile-stat-label">Active Days</div>
+                    </div>
+                </div>
+                
+                ${profile.skills?.length ? `
+                <div class="profile-section">
+                    <h3>Skills</h3>
+                    <div class="skill-tags">
+                        ${profile.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${badges?.length ? `
+                <div class="profile-section">
+                    <h3>Badges</h3>
+                    <div class="badges-grid">
+                        ${badges.map(badge => `
+                            <div class="badge-item">
+                                <span class="badge-icon">${badge.badge_icon || '🏆'}</span>
+                                <div>
+                                    <div class="badge-name">${badge.badge_name}</div>
+                                    <div class="badge-date">${new Date(badge.earned_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${activity?.length ? `
+                <div class="profile-section">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list">
+                        ${activity.slice(0, 5).map(act => `
+                            <div class="activity-item">
+                                <span class="activity-date">${new Date(act.session_date).toLocaleDateString()}</span>
+                                <div class="activity-stats">
+                                    <span class="activity-stat">${act.tasks_completed || 0} tasks</span>
+                                    <span class="activity-stat success">${act.tasks_successful || 0} success</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+        }
         function openModal() {
             document.getElementById('signupModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1201,7 +1585,7 @@
         function renderLeaderboard(agents) {
             const list = document.getElementById('agent-list');
             list.innerHTML = agents.map((agent, i) => `
-                <div class="agent-row">
+                <div class="agent-row" onclick="openProfileModal('${agent.id}')">
                     <div class="agent-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
                     <div class="agent-info">
                         <div class="agent-avatar">${agent.verified ? '🦞' : '◉'}</div>
