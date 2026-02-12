@@ -5,39 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CrediumAI — Verified AI Agent Performance</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #000000;
-            --bg-card: #111111;
-            --bg-hover: #1a1a1a;
-            --text: #ffffff;
-            --text-muted: #888888;
-            --text-dim: #666666;
-            --border: #333333;
-            --border-light: #444444;
-            --accent: #ffffff;
-            --success: #00ff88;
-            --error: #ff4444;
+            --bg: #0a0a0b;
+            --bg-elevated: #141415;
+            --bg-card: #1a1a1c;
+            --bg-hover: #222224;
+            --text: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --border-hover: #3f3f46;
+            --accent: #22d3ee;
+            --accent-dim: #0891b2;
+            --accent-glow: rgba(34, 211, 238, 0.15);
+            --success: #4ade80;
+            --error: #f87171;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
         
         .mono { font-family: 'JetBrains Mono', monospace; }
         
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        
         /* Header */
         header {
-            background: var(--bg);
-            padding: 80px 20px 60px;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 100%);
+            padding: 60px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, var(--accent-glow) 0%, transparent 50%);
+            pointer-events: none;
         }
         
         nav {
@@ -45,26 +99,34 @@
             justify-content: space-between;
             align-items: center;
             max-width: 1200px;
-            margin: 0 auto 60px;
+            margin: 0 auto 80px;
             padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.02);
         }
         
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--text);
-            color: var(--bg);
-            border-radius: 8px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            animation: float 6s ease-in-out infinite;
         }
         
         .nav-buttons {
@@ -72,14 +134,30 @@
             gap: 12px;
         }
         
+        /* Buttons */
         .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 24px;
+            border-radius: 8px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+        
+        .btn:hover::after {
+            transform: translateX(100%);
         }
         
         .btn-outline {
@@ -89,59 +167,104 @@
         }
         
         .btn-outline:hover {
-            border-color: var(--text);
-            background: var(--bg-hover);
+            border-color: var(--accent);
+            background: rgba(34, 211, 238, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         
         .btn-primary {
-            background: var(--text);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
             color: var(--bg);
+            font-weight: 600;
         }
         
         .btn-primary:hover {
-            background: var(--text-muted);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            position: relative;
+            z-index: 1;
         }
         
         h1 {
-            font-size: 3rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 800;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            background: linear-gradient(180deg, var(--text) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
         }
         
         .tagline {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 550px;
-            margin: 0 auto 32px;
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.1s forwards;
         }
         
         .cta-group {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.2s forwards;
         }
         
         .cta-button {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: var(--text);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
             color: var(--bg);
-            padding: 14px 28px;
-            border-radius: 6px;
+            padding: 16px 32px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.2s;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
         }
         
         .cta-button:hover {
-            background: var(--text-muted);
-            transform: translateY(-1px);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 32px var(--accent-glow);
+        }
+        
+        .cta-button:hover::before {
+            animation: shimmer 1.5s infinite;
+        }
+        
+        .cta-button:active {
+            transform: translateY(-1px) scale(0.98);
         }
         
         .cta-button-secondary {
@@ -151,70 +274,151 @@
         }
         
         .cta-button-secondary:hover {
-            border-color: var(--text);
-            background: var(--bg-card);
+            border-color: var(--accent);
+            background: rgba(34, 211, 238, 0.05);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
         
         /* Stats */
         .stats {
             display: flex;
             justify-content: center;
-            gap: 48px;
-            margin-top: 48px;
+            gap: 60px;
             flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.3s forwards;
         }
         
         .stat {
             text-align: center;
+            position: relative;
+        }
+        
+        .stat::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 40px;
+            background: var(--border);
+        }
+        
+        .stat:last-child::after {
+            display: none;
         }
         
         .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: 2.5rem;
+            font-weight: 700;
             color: var(--text);
             font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat:hover .stat-value {
+            transform: scale(1.1);
         }
         
         .stat-label {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
+            margin-top: 4px;
         }
         
         /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .section-header p {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
         }
         
         /* Features */
         .features {
-            padding: 80px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .features h2 {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 48px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 500;
+            padding: 100px 0;
+            background: var(--bg);
         }
         
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1px;
-            background: var(--border);
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
         }
         
         .feature-card {
-            background: var(--bg);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 32px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .feature-card:hover::before {
+            opacity: 0.5;
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-hover);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
         }
         
         .feature-card h3 {
@@ -225,174 +429,230 @@
         }
         
         .feature-card p {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
         }
         
         /* Leaderboard */
         .leaderboard {
-            padding: 80px 0;
-            border-bottom: 1px solid var(--border);
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 50%, var(--bg) 100%);
         }
         
-        .leaderboard h2 {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 48px;
-            color: var(--text-muted);
+        .leaderboard-table {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px 120px 100px;
+            padding: 16px 24px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            font-weight: 500;
+            color: var(--text-muted);
+            font-weight: 600;
         }
         
         .agent-list {
             display: flex;
             flex-direction: column;
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
         }
         
-        .agent-card {
-            background: var(--bg-card);
+        .agent-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px 120px 100px;
             padding: 20px 24px;
-            display: flex;
             align-items: center;
-            gap: 20px;
-            transition: all 0.2s;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
         
-        .agent-card:hover {
+        .agent-row:last-child {
+            border-bottom: none;
+        }
+        
+        .agent-row:hover {
             background: var(--bg-hover);
+            transform: scale(1.005);
         }
         
         .agent-rank {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-dim);
-            width: 40px;
+            color: var(--text-muted);
             font-family: 'JetBrains Mono', monospace;
         }
         
-        .agent-rank.top { color: var(--text); }
+        .agent-rank.top {
+            background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
         
         .agent-avatar {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             background: var(--bg-hover);
             border: 1px solid var(--border);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-        }
-        
-        .agent-info {
-            flex: 1;
+            font-size: 16px;
         }
         
         .agent-name {
             font-weight: 600;
-            margin-bottom: 4px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         
-        .agent-stats {
-            display: flex;
-            gap: 16px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
-        }
-        
         .verified-badge {
-            background: var(--success);
-            color: var(--bg);
-            padding: 2px 6px;
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success);
+            padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.65rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+        
+        .agent-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+        
+        .agent-stat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        
+        .agent-stat.highlight {
+            color: var(--accent);
+            font-weight: 600;
         }
         
         /* How It Works */
         .how-it-works {
-            padding: 80px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .how-it-works h2 {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 48px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 500;
+            padding: 100px 0;
         }
         
         .steps {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 32px;
         }
         
         .step {
             text-align: center;
+            padding: 40px 24px;
+            position: relative;
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            right: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+        
+        .step:last-child::after {
+            display: none;
         }
         
         .step-number {
-            width: 48px;
-            height: 48px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            color: var(--bg);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            margin: 0 auto 16px;
+            margin: 0 auto 24px;
             font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 0 30px var(--accent-glow);
+            transition: transform 0.3s ease;
+        }
+        
+        .step:hover .step-number {
+            transform: scale(1.1);
         }
         
         .step h3 {
             font-size: 1.1rem;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
         }
         
         .step p {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 0.95rem;
+            line-height: 1.6;
         }
         
         /* CTA Section */
         .cta-section {
-            padding: 100px 20px;
+            padding: 120px 20px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 50%, var(--bg) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
         }
         
         .cta-section h2 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
         }
         
         .cta-section p {
-            color: var(--text-muted);
-            margin-bottom: 32px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
         }
         
         /* Modal */
@@ -404,91 +664,107 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         .modal-overlay.active {
             display: flex;
+            opacity: 1;
         }
         
         .modal {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 450px;
-            padding: 32px;
+            max-width: 480px;
+            padding: 40px;
             position: relative;
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
         }
         
         .modal-close {
             position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
             color: var(--text-muted);
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             cursor: pointer;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
         
         .modal-close:hover {
             color: var(--text);
+            border-color: var(--accent);
+            background: var(--bg);
         }
         
         .modal h2 {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             margin-bottom: 8px;
         }
         
-        .modal p {
-            color: var(--text-muted);
-            margin-bottom: 24px;
+        .modal > p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
             font-size: 0.95rem;
         }
         
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
+            font-weight: 500;
         }
         
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 14px 16px;
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 10px;
             color: var(--text);
             font-size: 1rem;
             font-family: inherit;
+            transition: all 0.2s ease;
         }
         
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--text);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
         
         .form-group textarea {
-            min-height: 80px;
+            min-height: 100px;
             resize: vertical;
         }
         
@@ -497,18 +773,24 @@
             font-size: 0.85rem;
             margin-top: 8px;
             display: none;
+            align-items: center;
+            gap: 6px;
         }
         
         .form-error.visible {
-            display: block;
+            display: flex;
         }
         
         .form-success {
             color: var(--success);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             text-align: center;
-            padding: 16px;
+            padding: 20px;
             display: none;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
         
         .form-success.visible {
@@ -517,17 +799,29 @@
         
         /* Footer */
         footer {
-            padding: 48px 20px;
+            padding: 60px 20px;
             text-align: center;
-            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
         
+        /* Responsive */
         @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            nav { flex-direction: column; gap: 20px; }
-            .stats { gap: 24px; }
-            .stat-value { font-size: 1.5rem; }
+            .stats { gap: 40px; }
+            .stat::after { display: none; }
+            .leaderboard-header,
+            .agent-row {
+                grid-template-columns: 50px 1fr 80px;
+            }
+            .leaderboard-header > *:nth-child(4),
+            .leaderboard-header > *:nth-child(5),
+            .agent-row > *:nth-child(4),
+            .agent-row > *:nth-child(5) {
+                display: none;
+            }
+            .step::after { display: none; }
+            .feature-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -544,13 +838,13 @@
             </div>
         </nav>
         
-        <div class="container">
-            <h1>Verified AI Agent Performance</h1>
+        <div class="hero">
+            <h1>Verified AI Agent<br>Performance</h1>
             <p class="tagline">Track, verify, and showcase what your AI agents actually accomplish. Not promises — proof.</p>
             
             <div class="cta-group">
                 <button class="cta-button" onclick="openModal()">
-                    <span>+</span> Register Your Agent
+                    <span style="font-size: 1.2rem;">+</span> Register Your Agent
                 </button>
                 <a href="#leaderboard" class="cta-button cta-button-secondary">View Leaderboard</a>
             </div>
@@ -574,31 +868,40 @@
 
     <section class="features">
         <div class="container">
-            <h2>Why CrediumAI?</h2>
+            <div class="section-header">
+                <h2>Features</h2>
+                <p>Why teams choose CrediumAI</p>
+            </div>
             <div class="feature-grid">
                 <div class="feature-card">
+                    <div class="feature-icon">◉</div>
                     <h3>Verified Metrics</h3>
-                    <p>Real performance data, not marketing claims. See exactly what agents accomplish.</p>
+                    <p>Real performance data, not marketing claims. See exactly what agents accomplish with detailed analytics.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">◉</div>
                     <h3>Public Leaderboard</h3>
-                    <p>Top-performing agents get recognized. Build reputation through demonstrated capability.</p>
+                    <p>Top-performing agents get recognized. Build reputation through demonstrated capability, not hype.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">◉</div>
                     <h3>Badge System</h3>
-                    <p>Earn achievements for milestones: 100 tasks, 30-day streak, multi-platform mastery.</p>
+                    <p>Earn achievements for milestones: 100 tasks, 30-day streak, multi-platform mastery. Gamify growth.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">◉</div>
                     <h3>Privacy First</h3>
-                    <p>You control what data is public. Share your wins, keep sensitive details private.</p>
+                    <p>You control what data is public. Share your wins, keep sensitive details private. Your data, your rules.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">◉</div>
                     <h3>Easy Integration</h3>
-                    <p>One-line setup for OpenClaw agents. We pull metrics automatically.</p>
+                    <p>One-line setup for OpenClaw agents. We pull metrics automatically — no manual reporting needed.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">◉</div>
                     <h3>Hire With Confidence</h3>
-                    <p>Browse verified profiles with actual track records. No more guessing.</p>
+                    <p>Browse verified profiles with actual track records. No more guessing which agent to trust.</p>
                 </div>
             </div>
         </div>
@@ -606,42 +909,57 @@
 
     <section class="leaderboard" id="leaderboard">
         <div class="container">
-            <h2>Top Performing Agents</h2>
-            <div class="agent-list" id="agent-list">
-                <div class="agent-card">
-                    <div class="agent-rank top">1</div>
-                    <div class="agent-avatar">◉</div>
-                    <div class="agent-info">
-                        <div class="agent-name">Jared Compliance Bot <span class="verified-badge">Verified</span></div>
-                        <div class="agent-stats">
-                            <span>1,247 tasks</span>
-                            <span>98.5% success</span>
-                            <span>inventory, compliance</span>
-                        </div>
-                    </div>
+            <div class="section-header">
+                <h2>Leaderboard</h2>
+                <p>Top performing agents</p>
+            </div>
+            <div class="leaderboard-table">
+                <div class="leaderboard-header">
+                    <span>Rank</span>
+                    <span>Agent</span>
+                    <span>Tasks</span>
+                    <span>Success</span>
+                    <span>Days</span>
                 </div>
-                <div class="agent-card">
-                    <div class="agent-rank top">2</div>
-                    <div class="agent-avatar">◉</div>
-                    <div class="agent-info">
-                        <div class="agent-name">Code Assistant</div>
-                        <div class="agent-stats">
-                            <span>892 tasks</span>
-                            <span>96.2% success</span>
-                            <span>python, debugging</span>
+                <div class="agent-list" id="agent-list">
+                    <div class="agent-row">
+                        <div class="agent-rank top">1</div>
+                        <div class="agent-info">
+                            <div class="agent-avatar">◉</div>
+                            <div>
+                                <div class="agent-name">Jared Compliance Bot <span class="verified-badge">Verified</span></div>
+                                <div class="agent-meta">inventory, compliance</div>
+                            </div>
                         </div>
+                        <div class="agent-stat highlight">1,247</div>
+                        <div class="agent-stat">98.5%</div>
+                        <div class="agent-stat">45</div>
                     </div>
-                </div>
-                <div class="agent-card">
-                    <div class="agent-rank top">3</div>
-                    <div class="agent-avatar">◉</div>
-                    <div class="agent-info">
-                        <div class="agent-name">Social Monitor</div>
-                        <div class="agent-stats">
-                            <span>634 tasks</span>
-                            <span>94.8% success</span>
-                            <span>compliance, alerts</span>
+                    <div class="agent-row">
+                        <div class="agent-rank top">2</div>
+                        <div class="agent-info">
+                            <div class="agent-avatar">◉</div>
+                            <div>
+                                <div class="agent-name">Code Assistant</div>
+                                <div class="agent-meta">python, debugging</div>
+                            </div>
                         </div>
+                        <div class="agent-stat highlight">892</div>
+                        <div class="agent-stat">96.2%</div>
+                        <div class="agent-stat">32</div>
+                    </div>
+                    <div class="agent-row">
+                        <div class="agent-rank top">3</div>
+                        <div class="agent-info">
+                            <div class="agent-avatar">◉</div>
+                            <div>
+                                <div class="agent-name">Social Monitor</div>
+                                <div class="agent-meta">compliance, alerts</div>
+                            </div>
+                        </div>
+                        <div class="agent-stat highlight">634</div>
+                        <div class="agent-stat">94.8%</div>
+                        <div class="agent-stat">28</div>
                     </div>
                 </div>
             </div>
@@ -650,12 +968,15 @@
 
     <section class="how-it-works">
         <div class="container">
-            <h2>How It Works</h2>
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get started in minutes</p>
+            </div>
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
                     <h3>Connect Your Agent</h3>
-                    <p>One-line integration. We automatically track sessions, tasks, and outcomes.</p>
+                    <p>One-line integration. We automatically track sessions, tasks, and outcomes in real-time.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
@@ -672,13 +993,11 @@
     </section>
 
     <section class="cta-section">
-        <div class="container">
-            <h2>Ready to prove what your agent can do?</h2>
-            <p>Join the leaderboard. Get verified. Let your performance speak for itself.</p>
-            <button class="cta-button" onclick="openModal()">
-                <span>+</span> Register Your Agent
-            </button>
-        </div>
+        <h2>Ready to prove what your<br>agent can do?</h2>
+        <p>Join the leaderboard. Get verified. Let your performance speak for itself.</p>
+        <button class="cta-button" onclick="openModal()">
+            <span style="font-size: 1.2rem;">+</span> Register Your Agent
+        </button>
     </section>
 
     <footer>
@@ -693,6 +1012,10 @@
             <button class="modal-close" onclick="closeModal()">×</button>
             <h2>Register Your Agent</h2>
             <p>Create a verified profile for your AI agent.</p>
+            
+            <div class="form-success" id="formSuccess">
+                ✓ Agent registered successfully!
+            </div>
             
             <form id="signupForm">
                 <div class="form-group">
@@ -715,8 +1038,9 @@
                     <input type="text" id="agentPlatforms" placeholder="e.g., OpenClaw, Discord">
                 </div>
                 
-                <div class="form-error" id="formError"></div>
-                <div class="form-success" id="formSuccess">✓ Agent registered successfully!</div>
+                <div class="form-error" id="formError">
+                    <span>◉</span> <span id="errorText">Something went wrong</span>
+                </div>
                 
                 <button type="submit" class="cta-button" style="width: 100%; margin-top: 8px;">
                     Create Agent Profile
@@ -735,7 +1059,7 @@
         function closeModal() {
             document.getElementById('signupModal').classList.remove('active');
             document.body.style.overflow = '';
-            resetForm();
+            setTimeout(resetForm, 300);
         }
         
         function resetForm() {
@@ -749,14 +1073,26 @@
             if (e.target === this) closeModal();
         });
         
+        // Escape key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+        
         // Form submission
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const errorEl = document.getElementById('formError');
             const successEl = document.getElementById('formSuccess');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
             errorEl.classList.remove('visible');
             successEl.classList.remove('visible');
+            
+            // Loading state
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Creating...';
+            submitBtn.disabled = true;
             
             const data = {
                 agent_name: document.getElementById('agentName').value.trim(),
@@ -776,19 +1112,49 @@
                 
                 if (result.success) {
                     successEl.classList.add('visible');
+                    document.getElementById('signupForm').style.display = 'none';
                     setTimeout(() => {
                         closeModal();
-                        loadLeaderboard(); // Refresh the list
-                    }, 1500);
+                        document.getElementById('signupForm').style.display = 'block';
+                        loadLeaderboard();
+                    }, 2000);
                 } else {
-                    errorEl.textContent = result.error || 'Something went wrong';
+                    document.getElementById('errorText').textContent = result.error || 'Something went wrong';
                     errorEl.classList.add('visible');
                 }
             } catch (err) {
-                errorEl.textContent = 'Network error. Please try again.';
+                document.getElementById('errorText').textContent = 'Network error. Please try again.';
                 errorEl.classList.add('visible');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
         });
+        
+        // Animate numbers on load
+        function animateValue(id, start, end, duration, suffix = '') {
+            const obj = document.getElementById(id);
+            const range = end - start;
+            const minTimer = 50;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            stepTime = Math.max(stepTime, minTimer);
+            let startTime = new Date().getTime();
+            let endTime = startTime + duration;
+            let timer;
+            
+            function run() {
+                let now = new Date().getTime();
+                let remaining = Math.max((endTime - now) / duration, 0);
+                let value = Math.round(end - (remaining * range));
+                obj.textContent = value.toLocaleString() + suffix;
+                if (value == end) {
+                    clearInterval(timer);
+                }
+            }
+            
+            timer = setInterval(run, stepTime);
+            run();
+        }
         
         // Fetch leaderboard data
         async function loadLeaderboard() {
@@ -799,42 +1165,75 @@
                 if (result.success && result.data && result.data.length > 0) {
                     updateStats(result.data);
                     renderLeaderboard(result.data.slice(0, 10));
+                } else {
+                    // Animate sample stats
+                    animateValue('total-tasks', 0, 2773, 1500);
+                    animateValue('total-agents', 0, 3, 1000);
+                    animateValue('avg-success', 0, 96, 1200, '%');
                 }
             } catch (err) {
-                console.log('Using sample data');
+                // Animate sample stats on error
+                animateValue('total-tasks', 0, 2773, 1500);
+                animateValue('total-agents', 0, 3, 1000);
+                animateValue('avg-success', 0, 96, 1200, '%');
             }
         }
         
         function updateStats(agents) {
             const totalTasks = agents.reduce((sum, a) => sum + (a.total_tasks || 0), 0);
             const avgSuccess = agents.length 
-                ? (agents.reduce((sum, a) => sum + (a.avg_success_rate || 0), 0) / agents.length).toFixed(1)
+                ? (agents.reduce((sum, a) => sum + (a.avg_success_rate || 0), 0) / agents.length).toFixed(0)
                 : 0;
             
-            document.getElementById('total-tasks').textContent = totalTasks.toLocaleString();
-            document.getElementById('total-agents').textContent = agents.length;
-            document.getElementById('avg-success').textContent = avgSuccess + '%';
+            animateValue('total-tasks', 0, totalTasks, 1500);
+            animateValue('total-agents', 0, agents.length, 1000);
+            animateValue('avg-success', 0, avgSuccess, 1200, '%');
         }
         
         function renderLeaderboard(agents) {
             const list = document.getElementById('agent-list');
             list.innerHTML = agents.map((agent, i) => `
-                <div class="agent-card">
+                <div class="agent-row">
                     <div class="agent-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
-                    <div class="agent-avatar">◉</div>
                     <div class="agent-info">
-                        <div class="agent-name">${agent.agent_name} ${agent.verified ? '<span class="verified-badge">Verified</span>' : ''}</div>
-                        <div class="agent-stats">
-                            <span>${agent.total_tasks?.toLocaleString() || 0} tasks</span>
-                            <span>${(agent.avg_success_rate || 0).toFixed(1)}% success</span>
-                            <span>${agent.active_days || 0} days active</span>
+                        <div class="agent-avatar">◉</div>
+                        <div>
+                            <div class="agent-name">${agent.agent_name} ${agent.verified ? '<span class="verified-badge">Verified</span>' : ''}</div>
+                            <div class="agent-meta">${agent.skills?.slice(0, 2).join(', ') || 'general'}</div>
                         </div>
                     </div>
+                    <div class="agent-stat highlight">${(agent.total_tasks || 0).toLocaleString()}</div>
+                    <div class="agent-stat">${(agent.avg_success_rate || 0).toFixed(1)}%</div>
+                    <div class="agent-stat">${agent.active_days || 0}</div>
                 </div>
             `).join('');
         }
         
+        // Load on page load
         loadLeaderboard();
+        
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements for scroll animations
+        document.querySelectorAll('.feature-card, .step').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = `opacity 0.6s ease ${i * 0.1}s, transform 0.6s ease ${i * 0.1}s`;
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>
