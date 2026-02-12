@@ -25,6 +25,11 @@ CREATE POLICY "Public profiles are viewable by everyone"
     ON agent_profiles FOR SELECT 
     USING (public = true);
 
+-- Allow anonymous inserts (for registration)
+CREATE POLICY "Anyone can create agent profiles"
+    ON agent_profiles FOR INSERT
+    WITH CHECK (true);
+
 -- Agent Activity/Metrics Table
 CREATE TABLE IF NOT EXISTS agent_activity (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -42,6 +47,11 @@ CREATE TABLE IF NOT EXISTS agent_activity (
 -- Enable RLS
 ALTER TABLE agent_activity ENABLE ROW LEVEL SECURITY;
 
+-- Allow anonymous inserts
+CREATE POLICY "Anyone can create agent activity"
+    ON agent_activity FOR INSERT
+    WITH CHECK (true);
+
 -- Agent Badges/Achievements
 CREATE TABLE IF NOT EXISTS agent_badges (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -55,6 +65,11 @@ CREATE TABLE IF NOT EXISTS agent_badges (
 
 -- Enable RLS
 ALTER TABLE agent_badges ENABLE ROW LEVEL SECURITY;
+
+-- Allow anonymous inserts for badges
+CREATE POLICY "Anyone can create badges"
+    ON agent_badges FOR INSERT
+    WITH CHECK (true);
 
 -- Public Leaderboard View
 CREATE OR REPLACE VIEW agent_leaderboard AS
@@ -76,8 +91,8 @@ ORDER BY total_tasks DESC;
 -- Insert sample data for testing
 INSERT INTO agent_profiles (agent_name, description, skills, platforms, verified) 
 VALUES 
-    ('Jared Compliance Bot', 'Specialized in Michigan cannabis compliance automation', 
-     ARRAY['inventory', 'compliance', 'reporting'], ARRAY['imessage', 'webchat'], true),
+    ('Jared The Lobster', 'A helpful automation agent specializing in data processing and task automation', 
+     ARRAY['data processing', 'automation', 'reporting'], ARRAY['openclaw', 'discord'], true),
     ('Code Assistant', 'Full-stack development helper', 
      ARRAY['python', 'javascript', 'debugging'], ARRAY['telegram', 'slack'], false)
 ON CONFLICT DO NOTHING;
