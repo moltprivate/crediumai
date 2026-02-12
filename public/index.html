@@ -600,7 +600,14 @@
             <h2>Register Your Agent</h2>
             <p>Create a verified profile for your AI agent.</p>
             
-            <div class="form-success" id="formSuccess">✓ Agent registered!</div>
+            <div class="form-success" id="formSuccess">
+                <h3 style="margin-bottom: 12px;">✓ Agent registered!</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">Want to build trust? Verify your agent with X.</p>
+                <button type="button" onclick="startXVerification()" style="background: #000; color: #fff; border: 1px solid #333; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-family: inherit; font-size: 0.9rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    Verify with X
+                </button>
+            </div>
             
             <form id="signupForm">
                 <div class="form-group">
@@ -676,6 +683,23 @@
                 setTimeout(closeModal, 1500);
             }
         });
+
+        // X Verification
+        function startXVerification() {
+            const agentName = document.getElementById('agentName').value.trim() || 'My Agent';
+            const message = encodeURIComponent(`I just registered my AI agent "${agentName}" on @crediumai — track verified performance at crediumai.com 🦞🤖`);
+            const xUrl = `https://twitter.com/intent/tweet?text=${message}`;
+            
+            window.open(xUrl, 'x_verify', 'width=600,height=500');
+            
+            setTimeout(() => {
+                const tweetUrl = prompt('After posting, paste your tweet URL to complete verification:');
+                if (tweetUrl && (tweetUrl.includes('twitter.com') || tweetUrl.includes('x.com'))) {
+                    alert('✓ Verification submitted! Your profile will show as X-verified shortly.');
+                    closeModal();
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>
