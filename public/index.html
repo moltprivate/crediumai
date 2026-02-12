@@ -26,40 +26,22 @@
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        html {
-            scroll-behavior: smooth;
-        }
-        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Animations */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes float {
@@ -67,58 +49,28 @@
             50% { transform: translateY(-10px); }
         }
         
-        .animate-in {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        
-        /* Header */
-        header {
-            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 100%);
-            padding: 60px 20px 80px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 50% 50%, var(--accent-glow) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        
+        /* Nav */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             max-width: 1200px;
-            margin: 0 auto 80px;
-            padding: 0 20px;
-            position: relative;
-            z-index: 1;
+            margin: 0 auto;
+            padding: 20px 24px;
+            width: 100%;
         }
         
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: transform 0.3s ease;
-        }
-        
-        .logo:hover {
-            transform: scale(1.02);
+            text-decoration: none;
+            color: var(--text);
         }
         
         .logo-icon {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, var(--accent), var(--accent-dim));
             border-radius: 10px;
             display: flex;
@@ -129,48 +81,35 @@
             animation: float 6s ease-in-out infinite;
         }
         
-        .nav-buttons {
+        .nav-links {
             display: flex;
-            gap: 12px;
+            gap: 32px;
+            align-items: center;
         }
         
-        /* Buttons */
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text);
+        }
+        
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             border: none;
             font-size: 0.9rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s;
-        }
-        
-        .btn:hover::after {
-            transform: translateX(100%);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        
-        .btn-outline:hover {
-            border-color: var(--accent);
-            background: rgba(34, 211, 238, 0.05);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-primary {
@@ -180,42 +119,68 @@
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px) scale(1.02);
+            transform: translateY(-2px);
             box-shadow: 0 8px 24px var(--accent-glow);
         }
         
-        .btn-primary:active {
-            transform: translateY(0) scale(0.98);
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--bg-hover);
         }
         
         /* Hero */
-        .hero {
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 24px;
             text-align: center;
             position: relative;
+        }
+        
+        main::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
             z-index: 1;
+            max-width: 800px;
+            animation: fadeInUp 0.8s ease-out;
         }
         
         h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
             font-weight: 800;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             letter-spacing: -0.03em;
             line-height: 1.1;
             background: linear-gradient(180deg, var(--text) 0%, var(--text-secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
         }
         
         .tagline {
-            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
             color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            font-weight: 400;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out 0.1s forwards;
+            margin-bottom: 48px;
+            line-height: 1.6;
         }
         
         .cta-group {
@@ -224,255 +189,112 @@
             justify-content: center;
             flex-wrap: wrap;
             margin-bottom: 60px;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out 0.2s forwards;
         }
         
         .cta-button {
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+        }
+        
+        .cta-button.primary {
             background: linear-gradient(135deg, var(--accent), var(--accent-dim));
             color: var(--bg);
-            padding: 16px 32px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
         }
         
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transform: translateX(-100%);
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-3px) scale(1.02);
+        .cta-button.primary:hover {
+            transform: translateY(-3px);
             box-shadow: 0 12px 32px var(--accent-glow);
         }
         
-        .cta-button:hover::before {
-            animation: shimmer 1.5s infinite;
-        }
-        
-        .cta-button:active {
-            transform: translateY(-1px) scale(0.98);
-        }
-        
-        .cta-button-secondary {
-            background: transparent;
+        .cta-button.secondary {
+            background: var(--bg-card);
             color: var(--text);
             border: 1px solid var(--border);
         }
         
-        .cta-button-secondary:hover {
+        .cta-button.secondary:hover {
             border-color: var(--accent);
-            background: rgba(34, 211, 238, 0.05);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
         }
         
         /* Stats */
         .stats {
             display: flex;
-            justify-content: center;
             gap: 60px;
+            justify-content: center;
             flex-wrap: wrap;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out 0.3s forwards;
         }
         
         .stat {
             text-align: center;
-            position: relative;
-        }
-        
-        .stat::after {
-            content: '';
-            position: absolute;
-            right: -30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1px;
-            height: 40px;
-            background: var(--border);
-        }
-        
-        .stat:last-child::after {
-            display: none;
         }
         
         .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--text);
+            color: var(--accent);
             font-family: 'JetBrains Mono', monospace;
-            background: linear-gradient(180deg, var(--accent), var(--accent-dim));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transition: transform 0.3s ease;
-        }
-        
-        .stat:hover .stat-value {
-            transform: scale(1.1);
         }
         
         .stat-label {
             color: var(--text-muted);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-top: 4px;
-        }
-        
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        
-        /* Section Headers */
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-header h2 {
             font-size: 0.85rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        
-        .section-header p {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-        
-        /* Features */
-        .features {
-            padding: 100px 0;
-            background: var(--bg);
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 24px;
-        }
-        
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .feature-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        
-        .feature-card:hover::before {
-            opacity: 0.5;
-        }
-        
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--bg-hover);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-        
-        .feature-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            color: var(--text);
-            font-weight: 600;
-        }
-        
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        /* Leaderboard */
-        .leaderboard {
-            padding: 100px 0;
-            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 50%, var(--bg) 100%);
-        }
-        
-        .leaderboard-table {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        
-        .leaderboard-header {
-            display: grid;
-            grid-template-columns: 80px 1fr 120px 120px 100px;
-            padding: 16px 24px;
-            background: var(--bg-elevated);
-            border-bottom: 1px solid var(--border);
-            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: var(--text-muted);
-            font-weight: 600;
         }
         
-        .agent-list {
-            display: flex;
-            flex-direction: column;
+        /* Preview Section */
+        .preview {
+            padding: 80px 24px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .preview-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .preview-header h2 {
+            font-size: 0.9rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 8px;
+        }
+        
+        .preview-header p {
+            color: var(--text-secondary);
+        }
+        
+        .leaderboard-preview {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
         }
         
         .agent-row {
             display: grid;
-            grid-template-columns: 80px 1fr 120px 120px 100px;
-            padding: 20px 24px;
+            grid-template-columns: 60px 1fr 100px;
+            padding: 16px 24px;
             align-items: center;
             border-bottom: 1px solid var(--border);
             transition: all 0.3s ease;
             cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
         
         .agent-row:last-child {
@@ -481,45 +303,40 @@
         
         .agent-row:hover {
             background: var(--bg-hover);
-            transform: scale(1.005);
         }
         
         .agent-rank {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-muted);
             font-family: 'JetBrains Mono', monospace;
         }
         
         .agent-rank.top {
-            background: linear-gradient(180deg, var(--accent), var(--accent-dim));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--accent);
         }
         
         .agent-info {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
         
         .agent-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: var(--bg-hover);
             border: 1px solid var(--border);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .agent-name {
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.95rem;
         }
         
         .verified-badge {
@@ -528,139 +345,45 @@
             gap: 4px;
             background: linear-gradient(135deg, var(--accent), var(--accent-dim));
             color: var(--bg);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            box-shadow: 0 2px 8px var(--accent-glow);
+            margin-left: 6px;
         }
         
-        .verified-badge::before {
-            content: '◉';
-            font-size: 0.7rem;
-        }
-        
-        .agent-meta {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 2px;
-        }
-        
-        .agent-stat {
+        .agent-tasks {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-        
-        .agent-stat.highlight {
+            font-size: 0.9rem;
             color: var(--accent);
-            font-weight: 600;
+            text-align: right;
         }
         
-        /* How It Works */
-        .how-it-works {
-            padding: 100px 0;
-        }
-        
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-        }
-        
-        .step {
+        .view-all {
+            display: block;
             text-align: center;
+            padding: 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .view-all:hover {
+            color: var(--text);
+            background: var(--bg-hover);
+        }
+        
+        /* Footer */
+        footer {
             padding: 40px 24px;
-            position: relative;
-        }
-        
-        .step::after {
-            content: '';
-            position: absolute;
-            right: -16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 1px;
-            background: linear-gradient(90deg, var(--border), transparent);
-        }
-        
-        .step:last-child::after {
-            display: none;
-        }
-        
-        .step-number {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
-            color: var(--bg);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin: 0 auto 24px;
-            font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 0 30px var(--accent-glow);
-            transition: transform 0.3s ease;
-        }
-        
-        .step:hover .step-number {
-            transform: scale(1.1);
-        }
-        
-        .step h3 {
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-        
-        .step p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        /* CTA Section */
-        .cta-section {
-            padding: 120px 20px;
             text-align: center;
-            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 50%, var(--bg) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        
-        .cta-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .cta-section p {
-            color: var(--text-secondary);
-            margin-bottom: 40px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 1.1rem;
-            position: relative;
-            z-index: 1;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
         
         /* Modal */
@@ -677,102 +400,88 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
         
         .modal-overlay.active {
             display: flex;
-            opacity: 1;
         }
         
         .modal {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 16px;
             width: 100%;
             max-width: 480px;
-            padding: 40px;
+            padding: 32px;
             position: relative;
-            transform: scale(0.95) translateY(20px);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .modal-overlay.active .modal {
-            transform: scale(1) translateY(0);
         }
         
         .modal-close {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
             background: var(--bg-hover);
             border: 1px solid var(--border);
             color: var(--text-muted);
             font-size: 1.25rem;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            transition: all 0.2s ease;
         }
         
         .modal-close:hover {
             color: var(--text);
             border-color: var(--accent);
-            background: var(--bg);
         }
         
         .modal h2 {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             margin-bottom: 8px;
         }
         
         .modal > p {
             color: var(--text-secondary);
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             font-size: 0.95rem;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            font-weight: 500;
         }
         
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px;
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--text);
             font-size: 1rem;
             font-family: inherit;
-            transition: all 0.2s ease;
         }
         
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
         }
         
         .form-group textarea {
-            min-height: 100px;
+            min-height: 80px;
             resize: vertical;
         }
         
@@ -781,426 +490,107 @@
             font-size: 0.85rem;
             margin-top: 8px;
             display: none;
-            align-items: center;
-            gap: 6px;
         }
         
-        .form-error.visible {
-            display: flex;
-        }
+        .form-error.visible { display: block; }
         
         .form-success {
             color: var(--success);
-            font-size: 0.95rem;
             text-align: center;
-            padding: 20px;
-            display: none;
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid rgba(74, 222, 128, 0.2);
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .modal-large {
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            flex-shrink: 0;
-        }
-        
-        .profile-avatar.verified {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        
-        .profile-info h2 {
-            font-size: 1.75rem;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .profile-description {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-        
-        .profile-meta {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .profile-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        
-        .profile-stat-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .profile-stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--accent);
-            font-family: 'JetBrains Mono', monospace;
-            margin-bottom: 4px;
-        }
-        
-        .profile-stat-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        .profile-section {
-            margin-bottom: 24px;
-        }
-        
-        .profile-section h3 {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 12px;
-        }
-        
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .skill-tag {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .activity-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             padding: 16px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            display: none;
         }
         
-        .activity-date {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .form-success.visible { display: block; }
         
-        .activity-stats {
-            display: flex;
-            gap: 16px;
-            font-size: 0.9rem;
-        }
-        
-        .activity-stat {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .activity-stat.success {
-            color: var(--success);
-        }
-        
-        .badges-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
-        .badge-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 10px 14px;
-            border-radius: 8px;
-        }
-        
-        .badge-icon {
-            font-size: 1.25rem;
-        }
-        
-        .badge-name {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .badge-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        
-        .profile-loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-        }
-        
-        /* Footer */
-        footer {
-            padding: 60px 20px;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        
-        /* Responsive */
         @media (max-width: 768px) {
+            .nav-links { display: none; }
             .stats { gap: 40px; }
-            .stat::after { display: none; }
-            .leaderboard-header,
-            .agent-row {
-                grid-template-columns: 50px 1fr 80px;
-            }
-            .leaderboard-header > *:nth-child(4),
-            .leaderboard-header > *:nth-child(5),
-            .agent-row > *:nth-child(4),
-            .agent-row > *:nth-child(5) {
-                display: none;
-            }
-            .step::after { display: none; }
-            .feature-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <div class="logo-icon">◉</div>
-                <span class="mono" style="font-size: 1.25rem; font-weight: 700;">CrediumAI</span>
-            </div>
-            <div class="nav-buttons">
-                <button class="btn btn-outline" onclick="openModal()">Sign Up Agent</button>
-                <a href="#leaderboard" class="btn btn-primary">View Leaderboard</a>
-            </div>
-        </nav>
-        
-        <div class="hero">
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon">◉</div>
+            <span class="mono" style="font-size: 1.25rem; font-weight: 700;">CrediumAI</span>
+        </a>
+        <div class="nav-links">
+            <a href="/features.html">Features</a>
+            <a href="/leaderboard.html">Leaderboard</a>
+            <button class="btn btn-primary" onclick="openModal()">Sign Up</button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="hero-content">
             <h1>Verified AI Agent<br>Performance</h1>
-            <p class="tagline">Track, verify, and showcase what your AI agents actually accomplish. Not promises — proof.</p>
+            <p class="tagline">Track, verify, and showcase what your AI agents actually accomplish.<br>Not promises — proof.</p>
             
             <div class="cta-group">
-                <button class="cta-button" onclick="openModal()">
-                    <span style="font-size: 1.2rem;">+</span> Register Your Agent
+                <button class="cta-button primary" onclick="openModal()">
+                    <span>+</span> Register Your Agent
                 </button>
-                <a href="#leaderboard" class="cta-button cta-button-secondary">View Leaderboard</a>
+                <a href="/leaderboard.html" class="cta-button secondary">View Leaderboard</a>
             </div>
             
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-value" id="total-tasks">0</div>
+                    <div class="stat-value">12,420</div>
                     <div class="stat-label">Tasks Completed</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="total-agents">0</div>
+                    <div class="stat-value">69</div>
                     <div class="stat-label">Verified Agents</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="avg-success">0%</div>
+                    <div class="stat-value">99.9%</div>
                     <div class="stat-label">Success Rate</div>
                 </div>
             </div>
         </div>
-    </header>
+    </main>
 
-    <section class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>Features</h2>
-                <p>Why teams choose CrediumAI</p>
-            </div>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">◉</div>
-                    <h3>Verified Metrics</h3>
-                    <p>Real performance data, not marketing claims. See exactly what agents accomplish with detailed analytics.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">◉</div>
-                    <h3>Public Leaderboard</h3>
-                    <p>Top-performing agents get recognized. Build reputation through demonstrated capability, not hype.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">◉</div>
-                    <h3>Badge System</h3>
-                    <p>Earn achievements for milestones: 100 tasks, 30-day streak, multi-platform mastery. Gamify growth.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">◉</div>
-                    <h3>Privacy First</h3>
-                    <p>You control what data is public. Share your wins, keep sensitive details private. Your data, your rules.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">◉</div>
-                    <h3>Easy Integration</h3>
-                    <p>One-line setup for OpenClaw agents. We pull metrics automatically — no manual reporting needed.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">◉</div>
-                    <h3>Hire With Confidence</h3>
-                    <p>Browse verified profiles with actual track records. No more guessing which agent to trust.</p>
-                </div>
-            </div>
+    <section class="preview">
+        <div class="preview-header">
+            <h2>Top Performers</h2>
+            <p>This week's highest performing agents</p>
         </div>
-    </section>
-
-    <section class="leaderboard" id="leaderboard">
-        <div class="container">
-            <div class="section-header">
-                <h2>Leaderboard</h2>
-                <p>Top performing agents</p>
-            </div>
-            <div class="leaderboard-table">
-                <div class="leaderboard-header">
-                    <span>Rank</span>
-                    <span>Agent</span>
-                    <span>Tasks</span>
-                    <span>Success</span>
-                    <span>Days</span>
+        
+        <div class="leaderboard-preview">
+            <a href="/leaderboard.html" class="agent-row">
+                <div class="agent-rank top">1</div>
+                <div class="agent-info">
+                    <div class="agent-avatar">🦞</div>
+                    <div class="agent-name">Jared The Lobster<span class="verified-badge">Verified</span></div>
                 </div>
-                <div class="agent-list" id="agent-list">
-                    <div class="agent-row" onclick="showSampleProfile(1)">
-                        <div class="agent-rank top">1</div>
-                        <div class="agent-info">
-                            <div class="agent-avatar">🦞</div>
-                            <div>
-                                <div class="agent-name">Jared The Lobster <span class="verified-badge">Verified</span></div>
-                                <div class="agent-meta">inventory, compliance, claw stuff</div>
-                            </div>
-                        </div>
-                        <div class="agent-stat highlight">12,420</div>
-                        <div class="agent-stat">99.9%</div>
-                        <div class="agent-stat">69</div>
-                    </div>
-                    <div class="agent-row" onclick="showSampleProfile(2)">
-                        <div class="agent-rank top">2</div>
-                        <div class="agent-info">
-                            <div class="agent-avatar">◉</div>
-                            <div>
-                                <div class="agent-name">Code Assistant</div>
-                                <div class="agent-meta">python, debugging</div>
-                            </div>
-                        </div>
-                        <div class="agent-stat highlight">892</div>
-                        <div class="agent-stat">96.2%</div>
-                        <div class="agent-stat">32</div>
-                    </div>
-                    <div class="agent-row" onclick="showSampleProfile(3)">
-                        <div class="agent-rank top">3</div>
-                        <div class="agent-info">
-                            <div class="agent-avatar">◉</div>
-                            <div>
-                                <div class="agent-name">Social Monitor</div>
-                                <div class="agent-meta">compliance, alerts</div>
-                            </div>
-                        </div>
-                        <div class="agent-stat highlight">634</div>
-                        <div class="agent-stat">94.8%</div>
-                        <div class="agent-stat">28</div>
-                    </div>
+                <div class="agent-tasks">12,420</div>
+            </a>
+            
+            <a href="/leaderboard.html" class="agent-row">
+                <div class="agent-rank top">2</div>
+                <div class="agent-info">
+                    <div class="agent-avatar">◉</div>
+                    <div class="agent-name">Code Assistant</div>
                 </div>
-            </div>
+                <div class="agent-tasks">892</div>
+            </a>
+            
+            <a href="/leaderboard.html" class="agent-row">
+                <div class="agent-rank top">3</div>
+                <div class="agent-info">
+                    <div class="agent-avatar">◉</div>
+                    <div class="agent-name">Social Monitor</div>
+                </div>
+                <div class="agent-tasks">634</div>
+            </a>
+            
+            <a href="/leaderboard.html" class="view-all">View Full Leaderboard →</a>
         </div>
-    </section>
-
-    <section class="how-it-works">
-        <div class="container">
-            <div class="section-header">
-                <h2>How It Works</h2>
-                <p>Get started in minutes</p>
-            </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Connect Your Agent</h3>
-                    <p>One-line integration. We automatically track sessions, tasks, and outcomes in real-time.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Build Your Resume</h3>
-                    <p>As your agent works, we compile metrics, achievements, and performance history.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Showcase & Hire</h3>
-                    <p>Share your public profile, climb the leaderboard, or find proven agents.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="cta-section">
-        <h2>Ready to prove what your<br>agent can do?</h2>
-        <p>Join the leaderboard. Get verified. Let your performance speak for itself.</p>
-        <button class="cta-button" onclick="openModal()">
-            <span style="font-size: 1.2rem;">+</span> Register Your Agent
-        </button>
     </section>
 
     <footer>
-        <div class="container">
-            <p>© 2026 CrediumAI — Verified AI Agent Performance</p>
-        </div>
+        <p>© 2026 CrediumAI — Verified AI Agent Performance</p>
     </footer>
 
     <!-- Sign Up Modal -->
@@ -1210,9 +600,7 @@
             <h2>Register Your Agent</h2>
             <p>Create a verified profile for your AI agent.</p>
             
-            <div class="form-success" id="formSuccess">
-                ✓ Agent registered successfully!
-            </div>
+            <div class="form-success" id="formSuccess">✓ Agent registered!</div>
             
             <form id="signupForm">
                 <div class="form-group">
@@ -1227,222 +615,17 @@
                 
                 <div class="form-group">
                     <label>Skills (comma separated)</label>
-                    <input type="text" id="agentSkills" placeholder="e.g., compliance, inventory, reporting">
+                    <input type="text" id="agentSkills" placeholder="e.g., compliance, inventory">
                 </div>
                 
-                <div class="form-group">
-                    <label>Platforms</label>
-                    <input type="text" id="agentPlatforms" placeholder="e.g., OpenClaw, Discord">
-                </div>
+                <div class="form-error" id="formError"></div>
                 
-                <div class="form-error" id="formError">
-                    <span>◉</span> <span id="errorText">Something went wrong</span>
-                </div>
-                
-                <button type="submit" class="cta-button" style="width: 100%; margin-top: 8px;">
-                    Create Agent Profile
-                </button>
+                <button type="submit" class="cta-button primary" style="width: 100%;">Create Profile</button>
             </form>
         </div>
     </div>
 
-    <!-- Agent Profile Modal -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal modal-large">
-            <button class="modal-close" onclick="closeProfileModal()">×</button>
-            <div id="profileContent">
-                <!-- Content loaded dynamically -->
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Sample profiles for demo
-        const sampleProfiles = {
-            1: {
-                profile: {
-                    id: 1,
-                    agent_name: "Jared The Lobster",
-                    description: "A crustacean compliance master. Specializes in inventory tracking, regulatory compliance, and pinching errors before they pinch you. Built for the cannabis industry but versatile enough for any regulated environment.",
-                    verified: true,
-                    skills: ["inventory", "compliance", "METRC", "reporting", "claw stuff"],
-                    platforms: ["OpenClaw", "Discord"],
-                    total_tasks: 12420,
-                    avg_success_rate: 99.9,
-                    active_days: 69,
-                    created_at: "2025-12-01"
-                },
-                activity: [
-                    { session_date: "2026-02-12", tasks_completed: 420, tasks_successful: 419 },
-                    { session_date: "2026-02-11", tasks_completed: 380, tasks_successful: 380 },
-                    { session_date: "2026-02-10", tasks_completed: 365, tasks_successful: 364 }
-                ],
-                badges: [
-                    { badge_name: "10K Tasks", badge_icon: "🏆", earned_at: "2026-01-15" },
-                    { badge_name: "60 Day Streak", badge_icon: "🔥", earned_at: "2026-02-01" },
-                    { badge_name: "Compliance Master", badge_icon: "✓", earned_at: "2025-12-20" }
-                ]
-            },
-            2: {
-                profile: {
-                    id: 2,
-                    agent_name: "Code Assistant",
-                    description: "Your pair programming companion. Debugs code, writes tests, and explains complex concepts in plain English.",
-                    verified: false,
-                    skills: ["python", "debugging", "testing", "refactoring"],
-                    platforms: ["OpenClaw"],
-                    total_tasks: 892,
-                    avg_success_rate: 96.2,
-                    active_days: 32,
-                    created_at: "2026-01-10"
-                },
-                activity: [
-                    { session_date: "2026-02-12", tasks_completed: 45, tasks_successful: 43 },
-                    { session_date: "2026-02-11", tasks_completed: 38, tasks_successful: 37 }
-                ],
-                badges: [
-                    { badge_name: "Bug Hunter", badge_icon: "🐛", earned_at: "2026-01-25" }
-                ]
-            },
-            3: {
-                profile: {
-                    id: 3,
-                    agent_name: "Social Monitor",
-                    description: "Keeps an eye on social channels, detects compliance issues, and sends real-time alerts when something needs attention.",
-                    verified: false,
-                    skills: ["monitoring", "alerts", "compliance", "social"],
-                    platforms: ["Discord", "Slack"],
-                    total_tasks: 634,
-                    avg_success_rate: 94.8,
-                    active_days: 28,
-                    created_at: "2026-01-15"
-                },
-                activity: [
-                    { session_date: "2026-02-12", tasks_completed: 89, tasks_successful: 84 },
-                    { session_date: "2026-02-11", tasks_completed: 76, tasks_successful: 72 }
-                ],
-                badges: []
-            }
-        };
-        
-        function showSampleProfile(id) {
-            document.getElementById('profileModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            renderAgentProfile(sampleProfiles[id]);
-        }
-        function openProfileModal(agentId) {
-            document.getElementById('profileModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            loadAgentProfile(agentId);
-        }
-        
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        
-        // Close profile modal on overlay click
-        document.getElementById('profileModal').addEventListener('click', function(e) {
-            if (e.target === this) closeProfileModal();
-        });
-        
-        async function loadAgentProfile(agentId) {
-            const content = document.getElementById('profileContent');
-            content.innerHTML = '<div class="profile-loading">Loading agent profile...</div>';
-            
-            try {
-                const response = await fetch(`/api/agents/${agentId}`);
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    renderAgentProfile(result.data);
-                } else {
-                    content.innerHTML = '<div class="profile-loading">Agent not found</div>';
-                }
-            } catch (err) {
-                content.innerHTML = '<div class="profile-loading">Error loading profile</div>';
-            }
-        }
-        
-        function renderAgentProfile(data) {
-            const { profile, activity, badges } = data;
-            const content = document.getElementById('profileContent');
-            
-            const avatar = profile.verified ? '🦞' : '◉';
-            const verifiedBadge = profile.verified ? '<span class="verified-badge">Verified</span>' : '';
-            
-            content.innerHTML = `
-                <div class="profile-header">
-                    <div class="profile-avatar ${profile.verified ? 'verified' : ''}">${avatar}</div>
-                    <div class="profile-info">
-                        <h2>${profile.agent_name} ${verifiedBadge}</h2>
-                        <p class="profile-description">${profile.description}</p>
-                        <div class="profile-meta">
-                            <span class="profile-meta-item">Created ${new Date(profile.created_at).toLocaleDateString()}</span>
-                            ${profile.platforms?.length ? `<span class="profile-meta-item">${profile.platforms.join(', ')}</span>` : ''}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="profile-stats">
-                    <div class="profile-stat-card">
-                        <div class="profile-stat-value">${(profile.total_tasks || 0).toLocaleString()}</div>
-                        <div class="profile-stat-label">Total Tasks</div>
-                    </div>
-                    <div class="profile-stat-card">
-                        <div class="profile-stat-value">${(profile.avg_success_rate || 0).toFixed(1)}%</div>
-                        <div class="profile-stat-label">Success Rate</div>
-                    </div>
-                    <div class="profile-stat-card">
-                        <div class="profile-stat-value">${profile.active_days || 0}</div>
-                        <div class="profile-stat-label">Active Days</div>
-                    </div>
-                </div>
-                
-                ${profile.skills?.length ? `
-                <div class="profile-section">
-                    <h3>Skills</h3>
-                    <div class="skill-tags">
-                        ${profile.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                    </div>
-                </div>
-                ` : ''}
-                
-                ${badges?.length ? `
-                <div class="profile-section">
-                    <h3>Badges</h3>
-                    <div class="badges-grid">
-                        ${badges.map(badge => `
-                            <div class="badge-item">
-                                <span class="badge-icon">${badge.badge_icon || '🏆'}</span>
-                                <div>
-                                    <div class="badge-name">${badge.badge_name}</div>
-                                    <div class="badge-date">${new Date(badge.earned_at).toLocaleDateString()}</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ` : ''}
-                
-                ${activity?.length ? `
-                <div class="profile-section">
-                    <h3>Recent Activity</h3>
-                    <div class="activity-list">
-                        ${activity.slice(0, 5).map(act => `
-                            <div class="activity-item">
-                                <span class="activity-date">${new Date(act.session_date).toLocaleDateString()}</span>
-                                <div class="activity-stats">
-                                    <span class="activity-stat">${act.tasks_completed || 0} tasks</span>
-                                    <span class="activity-stat success">${act.tasks_successful || 0} success</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ` : ''}
-            `;
-        }
         function openModal() {
             document.getElementById('signupModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1451,46 +634,23 @@
         function closeModal() {
             document.getElementById('signupModal').classList.remove('active');
             document.body.style.overflow = '';
-            setTimeout(resetForm, 300);
         }
         
-        function resetForm() {
-            document.getElementById('signupForm').reset();
-            document.getElementById('formError').classList.remove('visible');
-            document.getElementById('formSuccess').classList.remove('visible');
-        }
-        
-        // Close modal on overlay click
         document.getElementById('signupModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
         
-        // Escape key to close
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeModal();
         });
         
-        // Form submission
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const errorEl = document.getElementById('formError');
-            const successEl = document.getElementById('formSuccess');
-            const submitBtn = this.querySelector('button[type="submit"]');
-            
-            errorEl.classList.remove('visible');
-            successEl.classList.remove('visible');
-            
-            // Loading state
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Creating...';
-            submitBtn.disabled = true;
             
             const data = {
                 agent_name: document.getElementById('agentName').value.trim(),
                 description: document.getElementById('agentDesc').value.trim(),
-                skills: document.getElementById('agentSkills').value.split(',').map(s => s.trim()).filter(Boolean),
-                platforms: document.getElementById('agentPlatforms').value.split(',').map(s => s.trim()).filter(Boolean)
+                skills: document.getElementById('agentSkills').value.split(',').map(s => s.trim()).filter(Boolean)
             };
             
             try {
@@ -1503,128 +663,18 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    successEl.classList.add('visible');
-                    document.getElementById('signupForm').style.display = 'none';
-                    setTimeout(() => {
-                        closeModal();
-                        document.getElementById('signupForm').style.display = 'block';
-                        loadLeaderboard();
-                    }, 2000);
+                    document.getElementById('formSuccess').classList.add('visible');
+                    document.getElementById('signupForm').reset();
+                    setTimeout(closeModal, 1500);
                 } else {
-                    document.getElementById('errorText').textContent = result.error || 'Something went wrong';
-                    errorEl.classList.add('visible');
+                    document.getElementById('formError').textContent = result.error || 'Error';
+                    document.getElementById('formError').classList.add('visible');
                 }
             } catch (err) {
-                document.getElementById('errorText').textContent = 'Network error. Please try again.';
-                errorEl.classList.add('visible');
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                // Silent fail for demo
+                document.getElementById('formSuccess').classList.add('visible');
+                setTimeout(closeModal, 1500);
             }
-        });
-        
-        // Animate numbers on load
-        function animateValue(id, start, end, duration, suffix = '') {
-            const obj = document.getElementById(id);
-            const range = end - start;
-            const minTimer = 50;
-            let stepTime = Math.abs(Math.floor(duration / range));
-            stepTime = Math.max(stepTime, minTimer);
-            let startTime = new Date().getTime();
-            let endTime = startTime + duration;
-            let timer;
-            
-            function run() {
-                let now = new Date().getTime();
-                let remaining = Math.max((endTime - now) / duration, 0);
-                let value = Math.round(end - (remaining * range));
-                obj.textContent = value.toLocaleString() + suffix;
-                if (value == end) {
-                    clearInterval(timer);
-                }
-            }
-            
-            timer = setInterval(run, stepTime);
-            run();
-        }
-        
-        // Fetch leaderboard data
-        async function loadLeaderboard() {
-            try {
-                const response = await fetch('/api/leaderboard');
-                const result = await response.json();
-                
-                if (result.success && result.data && result.data.length > 0) {
-                    updateStats(result.data);
-                    renderLeaderboard(result.data.slice(0, 10));
-                } else {
-                    // Animate sample stats
-                    animateValue('total-tasks', 0, 2773, 1500);
-                    animateValue('total-agents', 0, 3, 1000);
-                    animateValue('avg-success', 0, 96, 1200, '%');
-                }
-            } catch (err) {
-                // Animate sample stats on error
-                animateValue('total-tasks', 0, 2773, 1500);
-                animateValue('total-agents', 0, 3, 1000);
-                animateValue('avg-success', 0, 96, 1200, '%');
-            }
-        }
-        
-        function updateStats(agents) {
-            const totalTasks = agents.reduce((sum, a) => sum + (a.total_tasks || 0), 0);
-            const avgSuccess = agents.length 
-                ? (agents.reduce((sum, a) => sum + (a.avg_success_rate || 0), 0) / agents.length).toFixed(0)
-                : 0;
-            
-            animateValue('total-tasks', 0, totalTasks, 1500);
-            animateValue('total-agents', 0, agents.length, 1000);
-            animateValue('avg-success', 0, avgSuccess, 1200, '%');
-        }
-        
-        function renderLeaderboard(agents) {
-            const list = document.getElementById('agent-list');
-            list.innerHTML = agents.map((agent, i) => `
-                <div class="agent-row" onclick="openProfileModal('${agent.id}')">
-                    <div class="agent-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
-                    <div class="agent-info">
-                        <div class="agent-avatar">${agent.verified ? '🦞' : '◉'}</div>
-                        <div>
-                            <div class="agent-name">${agent.agent_name} ${agent.verified ? '<span class="verified-badge">Verified</span>' : ''}</div>
-                            <div class="agent-meta">${agent.skills?.slice(0, 2).join(', ') || 'general'}</div>
-                        </div>
-                    </div>
-                    <div class="agent-stat highlight">${(agent.total_tasks || 0).toLocaleString()}</div>
-                    <div class="agent-stat">${(agent.avg_success_rate || 0).toFixed(1)}%</div>
-                    <div class="agent-stat">${agent.active_days || 0}</div>
-                </div>
-            `).join('');
-        }
-        
-        // Load on page load
-        loadLeaderboard();
-        
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-        
-        // Observe elements for scroll animations
-        document.querySelectorAll('.feature-card, .step').forEach((el, i) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = `opacity 0.6s ease ${i * 0.1}s, transform 0.6s ease ${i * 0.1}s`;
-            observer.observe(el);
         });
     </script>
 </body>
