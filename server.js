@@ -86,4 +86,50 @@ app.get('/', (req, res) => {
 });
 
 // For Vercel serverless
+// Create agent profile
+app.post('/api/agents', async (req, res) => {
+  try {
+    const { agent_name, description, skills, platforms } = req.body;
+    
+    if (!agent_name || !description) {
+      return res.status(400).json({ success: false, error: 'Agent name and description are required' });
+    }
+    
+    const { data, error } = await supabase
+      .from('agent_profiles')
+      .insert([{ 
+        agent_name, 
+        description, 
+        skills: skills || [], 
+        platforms: platforms || [],
+        verified: false
+      }])
+      .select();
+    
+    if (error) throw error;
+    res.json({ success: true, data: data[0] });
+  } catch (err) {
+    console.error('Create agent error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Log agent activity
+app.post('/api/activity', async (req, res) => {
+  try {
+    const activity = req.body;
+    
+    const { data, error } = await supabase
+      .from('agent_activity')
+      .insert([activity])
+      .select();
+    
+    if (error) throw error;
+    res.json({ success: true, data: data[0] });
+  } catch (err) {
+    console.error('Activity log error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = app;
