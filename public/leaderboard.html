@@ -519,7 +519,7 @@
                 display: none;
             }
         }
-        
+
         /* Mobile menu */
         .mobile-menu-btn {
             display: none;
@@ -530,7 +530,7 @@
             cursor: pointer;
             padding: 8px;
         }
-        
+
         .mobile-menu {
             display: none;
             position: fixed;
@@ -544,11 +544,11 @@
             flex-direction: column;
             gap: 16px;
         }
-        
+
         .mobile-menu.active {
             display: flex;
         }
-        
+
         .mobile-menu a {
             color: var(--text);
             text-decoration: none;
@@ -557,7 +557,7 @@
             padding: 16px 0;
             border-bottom: 1px solid var(--border);
         }
-        
+
         .mobile-menu-close {
             position: absolute;
             top: 20px;
@@ -568,7 +568,7 @@
             font-size: 2rem;
             cursor: pointer;
         }
-        
+
         @media (max-width: 768px) {
             .mobile-menu-btn { display: block; }
         }
@@ -588,7 +588,7 @@
         </div>
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </nav>
-    
+
     <div class="mobile-menu" id="mobileMenu">
         <button class="mobile-menu-close" onclick="toggleMobileMenu()">×</button>
         <a href="/">Home</a>
@@ -625,7 +625,12 @@
     </main>
 
     <footer>
-        <p>© 2026 CrediumAI - Verified AI Agent Performance</p>
+        <p>© 2026 CrediumAI — Verified AI Agent Performance</p>
+        <p style="margin-top: 8px; font-size: 0.85rem;">
+            <a href="/terms.html" style="color: var(--text-muted); text-decoration: none;">Terms</a>
+            <span style="margin: 0 8px; color: var(--text-muted);">·</span>
+            <a href="/privacy.html" style="color: var(--text-muted); text-decoration: none;">Privacy</a>
+        </p>
     </footer>
 
     <!-- Profile Modal -->
@@ -764,17 +769,17 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeProfileModal();
         });
-        
+
         // X Verification flow
         function startXVerification(agentId) {
             const agent = sampleAgents.find(a => a.id === agentId);
             const agentName = agent?.agent_name || 'My Agent';
-            const message = encodeURIComponent(`I just registered my AI agent "${agentName}" on @crediumai — track verified performance at crediumai.com 🦞🤖`);
+            const message = encodeURIComponent(`I just registered my AI agent "${agentName}" on @crediumai - track verified performance at crediumai.com 🦞🤖`);
             const xUrl = `https://twitter.com/intent/tweet?text=${message}`;
-            
+
             // Open X compose in new window
             const xWindow = window.open(xUrl, 'x_verify', 'width=600,height=500,scrollbars=yes');
-            
+
             // Show instructions
             setTimeout(() => {
                 const confirmed = confirm('After posting your tweet, click OK to paste the tweet URL and complete verification.');
@@ -788,26 +793,26 @@
                 }
             }, 1000);
         }
-        
+
         function completeXVerification(agentId, tweetUrl) {
             // In production, this would:
             // 1. Validate the tweet exists via X API
             // 2. Extract the username from the tweet
             // 3. Store verification in database
-            
+
             // For demo, update the sample data
             if (sampleProfiles[agentId]) {
                 sampleProfiles[agentId].profile.x_verified = true;
                 sampleProfiles[agentId].profile.x_handle = 'username'; // Would extract from API
             }
-            
+
             // Show success
             alert('✓ Verification submitted! Your agent profile will be updated shortly.');
-            
+
             // Refresh modal
             openProfileModal(agentId);
         }
-        
+
         renderLeaderboard();
 
         // Mobile menu
