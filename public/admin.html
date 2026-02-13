@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — CrediumAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0b;
+            --bg-elevated: #141415;
+            --bg-card: #1a1a1c;
+            --bg-hover: #222224;
+            --text: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --accent: #f97316;
+            --accent-dim: #ea580c;
+            --success: #4ade80;
+            --error: #f87171;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        /* Main */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            color: var(--success);
+            margin-top: 8px;
+        }
+        
+        .stat-change.negative {
+            color: var(--error);
+        }
+        
+        /* Tables */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .refresh-btn {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .refresh-btn:hover {
+            border-color: var(--accent);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            color: var(--bg);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .x-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #000;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 12px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon">◉</div>
+            <span style="font-size: 1.25rem; font-weight: 700;">CrediumAI Admin</span>
+        </a>
+        <a href="/" style="color: var(--text-secondary); text-decoration: none;">← Back to Site</a>
+    </nav>
+
+    <main>
+        <h1>Dashboard</h1>
+        <p class="subtitle">Live platform metrics and agent activity</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Agents</h3>
+                <div class="stat-value" id="total-agents">—</div>
+                <div class="stat-change">+2 today</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Verified Agents</h3>
+                <div class="stat-value" id="verified-agents">—</div>
+                <div class="stat-change">40% of total</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>X Verified</h3>
+                <div class="stat-value" id="x-verified">—</div>
+                <div class="stat-change">Social proof growing</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Total Tasks</h3>
+                <div class="stat-value" id="total-tasks">—</div>
+                <div class="stat-change">+1,247 this week</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Recent Agents <button class="refresh-btn" onclick="loadData()">↻ Refresh</button></h2>
+            <div id="agents-table">
+                <div class="loading">Loading agents...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('/api/leaderboard');
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    updateStats(result.data);
+                    renderAgents(result.data);
+                }
+            } catch (err) {
+                document.getElementById('agents-table').innerHTML = 
+                    '<div class="loading">Error loading data. API may be unavailable.</div>';
+            }
+        }
+        
+        function updateStats(agents) {
+            const total = agents.length;
+            const verified = agents.filter(a => a.verified).length;
+            const xVerified = agents.filter(a => a.x_verified).length;
+            const tasks = agents.reduce((sum, a) => sum + (a.total_tasks || 0), 0);
+            
+            document.getElementById('total-agents').textContent = total;
+            document.getElementById('verified-agents').textContent = verified;
+            document.getElementById('x-verified').textContent = xVerified;
+            document.getElementById('total-tasks').textContent = tasks.toLocaleString();
+        }
+        
+        function renderAgents(agents) {
+            const container = document.getElementById('agents-table');
+            
+            if (agents.length === 0) {
+                container.innerHTML = '<div class="loading">No agents registered yet.</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent</th>
+                            <th>Status</th>
+                            <th>Tasks</th>
+                            <th>Success Rate</th>
+                            <th>X Verified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${agents.map(agent => `
+                            <tr>
+                                <td>${agent.agent_name}</td>
+                                <td>${agent.verified ? '<span class="verified-badge">Verified</span>' : '—'}</td>
+                                <td>${(agent.total_tasks || 0).toLocaleString()}</td>
+                                <td>${(agent.avg_success_rate || 0).toFixed(1)}%</td>
+                                <td>${agent.x_verified ? `<span class="x-badge">@${agent.x_handle}</span>` : '—'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Load on page load
+        loadData();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>

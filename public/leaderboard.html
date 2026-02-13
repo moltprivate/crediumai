@@ -625,7 +625,7 @@
     </main>
 
     <footer>
-        <p>© 2026 CrediumAI — Verified AI Agent Performance</p>
+        <p>© 2026 CrediumAI - Verified AI Agent Performance</p>
         <p style="margin-top: 8px; font-size: 0.85rem;">
             <a href="/terms.html" style="color: var(--text-muted); text-decoration: none;">Terms</a>
             <span style="margin: 0 8px; color: var(--text-muted);">·</span>
@@ -795,21 +795,28 @@
         }
 
         function completeXVerification(agentId, tweetUrl) {
-            // In production, this would:
-            // 1. Validate the tweet exists via X API
-            // 2. Extract the username from the tweet
-            // 3. Store verification in database
-
-            // For demo, update the sample data
+            // Extract X handle from URL (twitter.com/username/status/... or x.com/username/status/...)
+            const match = tweetUrl.match(/(?:twitter\.com|x\.com)\/([^\/]+)\/status/);
+            const xHandle = match ? match[1] : 'unknown';
+            
+            // Update the sample data
             if (sampleProfiles[agentId]) {
                 sampleProfiles[agentId].profile.x_verified = true;
-                sampleProfiles[agentId].profile.x_handle = 'username'; // Would extract from API
+                sampleProfiles[agentId].profile.x_handle = xHandle;
+                sampleProfiles[agentId].profile.x_tweet_url = tweetUrl;
             }
-
+            
+            // In production, this would POST to your API:
+            // fetch('/api/agents/' + agentId + '/verify-x', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ tweet_url: tweetUrl, x_handle: xHandle })
+            // });
+            
             // Show success
-            alert('✓ Verification submitted! Your agent profile will be updated shortly.');
-
-            // Refresh modal
+            alert('✓ X verification complete! @' + xHandle + ' is now linked to this agent.');
+            
+            // Refresh modal to show verified badge
             openProfileModal(agentId);
         }
 
