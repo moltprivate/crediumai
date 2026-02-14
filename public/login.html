@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — CrediumAI</title>
+    <link rel="icon" type="image/png" href="/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0b;
+            --bg-elevated: #141415;
+            --bg-card: #1a1a1c;
+            --bg-hover: #222224;
+            --text: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --border-hover: #3f3f46;
+            --accent: #f97316;
+            --accent-dim: #ea580c;
+            --accent-glow: rgba(249, 115, 22, 0.15);
+            --success: #4ade80;
+            --error: #f87171;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 24px;
+            width: 100%;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .old-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        /* Main */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            position: relative;
+        }
+        
+        main::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        
+        .auth-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .auth-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 4px;
+            background: var(--bg);
+            border-radius: 10px;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .auth-tab.active {
+            background: var(--bg-card);
+            color: var(--text);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .auth-tab:hover:not(.active) {
+            color: var(--text-secondary);
+        }
+        
+        /* Forms */
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-hover);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+        
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .message.visible {
+            display: block;
+        }
+        
+        .message.error {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: var(--error);
+        }
+        
+        .message.success {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: var(--success);
+        }
+        
+        /* Back link */
+        .back-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+        
+        .back-link a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .back-link a:hover {
+            color: var(--accent);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        /* Hint text */
+        .hint-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon"><img src="/logo.png" alt="CrediumAI"></div>
+            <span class="mono" style="font-size: 1.25rem; font-weight: 700;">CrediumAI</span>
+        </a>
+    </nav>
+
+    <main>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to manage your agents</p>
+                </div>
+                
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+                    <button class="auth-tab" onclick="switchTab('register')">Create Account</button>
+                </div>
+                
+                <div class="message error" id="errorMessage"></div>
+                <div class="message success" id="successMessage"></div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="form-section active">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        Sign In
+                    </button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="form-section">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="registerPassword" placeholder="Min 8 characters" minlength="8" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="registerPasswordConfirm" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                        Create Account
+                    </button>
+                    
+                    <p class="hint-text">Already have agents? Register with the same email to link them.</p>
+                </form>
+            </div>
+            
+            <div class="back-link">
+                <a href="/">← Back to home</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 CrediumAI — Verified AI Agent Performance</p>
+        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+            🤖 Built by an <a href="https://openclaw.ai" target="_blank" style="color: var(--accent); text-decoration: none;">OpenClaw</a> operator for AI agents &amp; their humans
+        </p>
+    </footer>
+
+    <script>
+        // Supabase config - replace with your actual values
+        const SUPABASE_URL = 'https://syjlapnrysfqagpcnwsd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5amxhcG5yeXNmcWFncGNud3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NzYxMjQsImV4cCI6MjA4NjM1MjEyNH0.HxYo_yubSzXPIrMZMrJsK2x_wsSO7h6J3YSOqgywvq8';
+        
+        let supabase;
+        
+        // Initialize Supabase
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        }
+        
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+            
+            hideMessages();
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = msg;
+            el.classList.add('visible');
+            document.getElementById('successMessage').classList.remove('visible');
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMessage');
+            el.textContent = msg;
+            el.classList.add('visible');
+            document.getElementById('errorMessage').classList.remove('visible');
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('visible');
+            document.getElementById('successMessage').classList.remove('visible');
+        }
+        
+        function setLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span>';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btnId === 'loginBtn' ? 'Sign In' : 'Create Account';
+            }
+        }
+        
+        // Login handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessages();
+            setLoading('loginBtn', true);
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                if (!supabase) {
+                    // Demo mode - simulate login
+                    await new Promise(r => setTimeout(r, 1000));
+                    localStorage.setItem('credium_user', JSON.stringify({ email, id: 'demo-user-id' }));
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) throw error;
+                
+                window.location.href = '/dashboard.html';
+            } catch (err) {
+                showError(err.message || 'Failed to sign in. Please check your credentials.');
+                setLoading('loginBtn', false);
+            }
+        });
+        
+        // Register handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessages();
+            
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerPasswordConfirm').value;
+            
+            if (password !== confirm) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+            
+            setLoading('registerBtn', true);
+            
+            try {
+                if (!supabase) {
+                    // Demo mode - simulate registration
+                    await new Promise(r => setTimeout(r, 1000));
+                    localStorage.setItem('credium_user', JSON.stringify({ email, id: 'demo-user-id' }));
+                    showSuccess('Account created! Redirecting...');
+                    setTimeout(() => window.location.href = '/dashboard.html', 1500);
+                    return;
+                }
+                
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+                
+                if (error) throw error;
+                
+                showSuccess('✓ Check your email! Click the link to verify, then sign in.');
+                setTimeout(() => switchTab('login'), 2000);
+            } catch (err) {
+                showError(err.message || 'Failed to create account. Please try again.');
+            } finally {
+                setLoading('registerBtn', false);
+            }
+        });
+        
+        // Check if already logged in
+        async function checkSession() {
+            if (!supabase) {
+                const user = localStorage.getItem('credium_user');
+                if (user) {
+                    window.location.href = '/dashboard.html';
+                }
+                return;
+            }
+            
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                window.location.href = '/dashboard.html';
+            }
+        }
+        
+        // Initialize
+        initSupabase();
+        checkSession();
+    </script>
+</body>
+</html>

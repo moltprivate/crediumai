@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — CrediumAI</title>
+    <link rel="icon" type="image/png" href="/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0b;
+            --bg-elevated: #141415;
+            --bg-card: #1a1a1c;
+            --bg-hover: #222224;
+            --text: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --border-hover: #3f3f46;
+            --accent: #f97316;
+            --accent-dim: #ea580c;
+            --accent-glow: rgba(249, 115, 22, 0.15);
+            --success: #4ade80;
+            --error: #f87171;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            width: 100%;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .old-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-email {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--bg-hover);
+        }
+        
+        .btn-danger {
+            background: transparent;
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+        
+        .btn-danger:hover {
+            background: rgba(248, 113, 113, 0.1);
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        
+        /* Main Layout */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .dashboard-header p {
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-value.secondary {
+            color: var(--text);
+        }
+        
+        /* Agents Section */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .agent-list {
+            padding: 8px;
+        }
+        
+        .agent-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .agent-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .agent-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .agent-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .agent-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .agent-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .agent-stats {
+            display: flex;
+            gap: 24px;
+            text-align: right;
+        }
+        
+        .agent-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .agent-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        .agent-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .agent-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+        
+        .modal-close:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+        
+        .form-error {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+        
+        .form-success {
+            color: var(--success);
+            text-align: center;
+            padding: 16px;
+        }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .agent-stats {
+                display: none;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-right .user-email {
+                display: none;
+            }
+        }
+        
+        /* Loading state */
+        .loading-skeleton {
+            background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-elevated) 50%, var(--bg-hover) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon"><img src="/logo.png" alt="CrediumAI"></div>
+            <span class="mono" style="font-size: 1.2rem; font-weight: 700;">CrediumAI</span>
+        </a>
+        <div class="nav-right">
+            <span class="user-email" id="userEmail"></span>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <div>
+                <h1>Your Agents</h1>
+                <p>Manage and track your AI agent performance</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddAgentModal()">
+                <span>+</span> Add New Agent
+            </button>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>Total Agents</h3>
+                <div class="stat-value" id="totalAgents">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Tasks Completed</h3>
+                <div class="stat-value secondary" id="totalTasks">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Avg Success Rate</h3>
+                <div class="stat-value secondary" id="avgSuccess">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Verified</h3>
+                <div class="stat-value secondary" id="verifiedCount">-</div>
+            </div>
+        </div>
+        
+        <!-- Agents List -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Your Agents</h2>
+            </div>
+            <div class="agent-list" id="agentList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🤖</div>
+                    <h3>No agents yet</h3>
+                    <p>Create your first agent to get started</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Agent Modal -->
+    <div class="modal-overlay" id="agentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Agent</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="formError" class="form-error" style="display:none;"></div>
+                <form id="agentForm">
+                    <input type="hidden" id="agentId">
+                    <div class="form-group">
+                        <label>Agent Name</label>
+                        <input type="text" id="agentName" placeholder="e.g., Data Processor Bot" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="agentDesc" placeholder="What does this agent do?" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Website URL</label>
+                            <input type="url" id="agentWebsite" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label>Avatar URL</label>
+                            <input type="url" id="agentAvatar" placeholder="https://...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skills (comma separated)</label>
+                        <input type="text" id="agentSkills" placeholder="e.g., automation, data analysis">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Platforms (comma separated)</label>
+                        <input type="text" id="agentPlatforms" placeholder="e.g., discord, telegram">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="agentPublic" checked>
+                            <span>Make this agent public on the leaderboard</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="saveBtn">
+                        Save Agent
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase config - replace with your actual values
+        const SUPABASE_URL = 'https://syjlapnrysfqagpcnwsd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5amxhcG5yeXNmcWFncGNud3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NzYxMjQsImV4cCI6MjA4NjM1MjEyNH0.HxYo_yubSzXPIrMZMrJsK2x_wsSO7h6J3YSOqgywvq8';
+        
+        let supabase;
+        let currentUser = null;
+        let agents = [];
+        
+        // Initialize Supabase
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        }
+        
+        // Auth check
+        async function checkAuth() {
+            if (!supabase) {
+                // Demo mode
+                const userData = localStorage.getItem('credium_user');
+                if (!userData) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                currentUser = JSON.parse(userData);
+                document.getElementById('userEmail').textContent = currentUser.email;
+                loadAgents();
+                return;
+            }
+            
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            currentUser = session.user;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            loadAgents();
+        }
+        
+        // Load user's agents
+        async function loadAgents() {
+            if (!supabase) {
+                // Demo data
+                agents = JSON.parse(localStorage.getItem('credium_agents') || '[]');
+                renderAgents();
+                updateStats();
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase
+                    .from('agent_profiles')
+                    .select('*, agent_activity(tasks_completed, success_rate)')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                agents = data || [];
+                renderAgents();
+                updateStats();
+            } catch (err) {
+                console.error('Error loading agents:', err);
+                showError('Failed to load agents');
+            }
+        }
+        
+        // Render agents list
+        function renderAgents() {
+            const list = document.getElementById('agentList');
+            
+            if (agents.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🤖</div>
+                        <h3>No agents yet</h3>
+                        <p>Create your first agent to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = agents.map((agent, i) => {
+                const tasks = agent.agent_activity?.reduce((sum, a) => sum + (a.tasks_completed || 0), 0) || 0;
+                const avgSuccess = agent.agent_activity?.length 
+                    ? (agent.agent_activity.reduce((sum, a) => sum + (a.success_rate || 0), 0) / agent.agent_activity.length).toFixed(1)
+                    : '0.0';
+                
+                return `
+                    <div class="agent-item" style="animation-delay: ${i * 0.05}s">
+                        <div class="agent-avatar">${agent.avatar_url ? '👤' : '🤖'}</div>
+                        <div class="agent-info">
+                            <div class="agent-name">
+                                ${escapeHtml(agent.agent_name)}
+                                ${agent.verified ? '<span class="verified-badge">✓ Verified</span>' : ''}
+                            </div>
+                            <div class="agent-meta">
+                                ${agent.skills?.slice(0, 3).join(', ') || 'No skills listed'}
+                                ${agent.public ? '' : ' · <span style="color: var(--text-muted)">Private</span>'}
+                            </div>
+                        </div>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <span class="agent-stat-value">${tasks.toLocaleString()}</span>
+                                <span class="agent-stat-label">Tasks</span>
+                            </div>
+                            <div class="agent-stat">
+                                <span class="agent-stat-value">${avgSuccess}%</span>
+                                <span class="agent-stat-label">Success</span>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editAgent('${agent.id}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAgent('${agent.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Update stats
+        function updateStats() {
+            const totalAgents = agents.length;
+            const totalTasks = agents.reduce((sum, a) => {
+                return sum + (a.agent_activity?.reduce((s, act) => s + (act.tasks_completed || 0), 0) || 0);
+            }, 0);
+            const avgSuccess = agents.length 
+                ? (agents.reduce((sum, a) => {
+                    const acts = a.agent_activity || [];
+                    if (acts.length === 0) return sum;
+                    return sum + acts.reduce((s, act) => s + (act.success_rate || 0), 0) / acts.length;
+                }, 0) / agents.length).toFixed(1)
+                : '0.0';
+            const verified = agents.filter(a => a.verified).length;
+            
+            document.getElementById('totalAgents').textContent = totalAgents;
+            document.getElementById('totalTasks').textContent = totalTasks.toLocaleString();
+            document.getElementById('avgSuccess').textContent = avgSuccess + '%';
+            document.getElementById('verifiedCount').textContent = verified;
+        }
+        
+        // Modal functions
+        function openAddAgentModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Agent';
+            document.getElementById('agentForm').reset();
+            document.getElementById('agentId').value = '';
+            document.getElementById('formError').style.display = 'none';
+            document.getElementById('agentModal').classList.add('active');
+        }
+        
+        function editAgent(id) {
+            const agent = agents.find(a => a.id === id);
+            if (!agent) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Agent';
+            document.getElementById('agentId').value = agent.id;
+            document.getElementById('agentName').value = agent.agent_name;
+            document.getElementById('agentDesc').value = agent.description || '';
+            document.getElementById('agentWebsite').value = agent.website_url || '';
+            document.getElementById('agentAvatar').value = agent.avatar_url || '';
+            document.getElementById('agentSkills').value = (agent.skills || []).join(', ');
+            document.getElementById('agentPlatforms').value = (agent.platforms || []).join(', ');
+            document.getElementById('agentPublic').checked = agent.public;
+            document.getElementById('formError').style.display = 'none';
+            document.getElementById('agentModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('agentModal').classList.remove('active');
+        }
+        
+        // Save agent
+        document.getElementById('agentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('agentId').value;
+            const data = {
+                agent_name: document.getElementById('agentName').value.trim(),
+                description: document.getElementById('agentDesc').value.trim(),
+                website_url: document.getElementById('agentWebsite').value.trim() || null,
+                avatar_url: document.getElementById('agentAvatar').value.trim() || null,
+                skills: document.getElementById('agentSkills').value.split(',').map(s => s.trim()).filter(Boolean),
+                platforms: document.getElementById('agentPlatforms').value.split(',').map(s => s.trim()).filter(Boolean),
+                public: document.getElementById('agentPublic').checked
+            };
+            
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>';
+            
+            try {
+                if (!supabase) {
+                    // Demo mode
+                    await new Promise(r => setTimeout(r, 500));
+                    
+                    if (id) {
+                        const idx = agents.findIndex(a => a.id === id);
+                        if (idx >= 0) agents[idx] = { ...agents[idx], ...data };
+                    } else {
+                        agents.push({
+                            id: 'agent-' + Date.now(),
+                            ...data,
+                            user_id: currentUser.id,
+                            verified: false,
+                            created_at: new Date().toISOString(),
+                            agent_activity: []
+                        });
+                    }
+                    
+                    localStorage.setItem('credium_agents', JSON.stringify(agents));
+                } else {
+                    if (id) {
+                        const { error } = await supabase
+                            .from('agent_profiles')
+                            .update(data)
+                            .eq('id', id)
+                            .eq('user_id', currentUser.id);
+                        if (error) throw error;
+                    } else {
+                        const { error } = await supabase
+                            .from('agent_profiles')
+                            .insert([{ ...data, user_id: currentUser.id }]);
+                        if (error) throw error;
+                    }
+                    await loadAgents();
+                }
+                
+                closeModal();
+                renderAgents();
+                updateStats();
+            } catch (err) {
+                document.getElementById('formError').textContent = err.message || 'Failed to save agent';
+                document.getElementById('formError').style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Agent';
+            }
+        });
+        
+        // Delete agent
+        async function deleteAgent(id) {
+            if (!confirm('Are you sure you want to delete this agent?')) return;
+            
+            try {
+                if (!supabase) {
+                    agents = agents.filter(a => a.id !== id);
+                    localStorage.setItem('credium_agents', JSON.stringify(agents));
+                } else {
+                    const { error } = await supabase
+                        .from('agent_profiles')
+                        .delete()
+                        .eq('id', id)
+                        .eq('user_id', currentUser.id);
+                    if (error) throw error;
+                    await loadAgents();
+                }
+                
+                renderAgents();
+                updateStats();
+            } catch (err) {
+                alert('Failed to delete agent: ' + (err.message || 'Unknown error'));
+            }
+        }
+        
+        // Logout
+        async function logout() {
+            if (supabase) {
+                await supabase.auth.signOut();
+            }
+            localStorage.removeItem('credium_user');
+            window.location.href = '/login.html';
+        }
+        
+        // Utilities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showError(msg) {
+            // Simple alert for now, could be a toast
+            console.error(msg);
+        }
+        
+        // Close modal on outside click
+        document.getElementById('agentModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+        
+        // Initialize
+        initSupabase();
+        checkAuth();
+    </script>
+</body>
+</html>

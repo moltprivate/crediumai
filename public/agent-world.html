@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent World — CrediumAI Visualizer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦞</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0f0f10;
+            color: #fafafa;
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #3f3f46;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1a1c;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .status {
+            color: #71717a;
+            font-size: 0.85rem;
+        }
+        
+        .status span {
+            color: #4ade80;
+        }
+        
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(26, 26, 28, 0.98);
+            border: 1px solid #3f3f46;
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 300px;
+        }
+        
+        .controls h3 {
+            font-size: 0.8rem;
+            color: #d4d4d8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .agent-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #d4d4d8;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        .legend-dot.blue { background: #3b82f6; }
+        .legend-dot.green { background: #22c55e; }
+        .legend-dot.purple { background: #a855f7; }
+        .legend-dot.orange { background: #f97316; }
+        .legend-dot.pink { background: #ec4899; }
+        
+        .stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 26, 28, 0.98);
+            border: 1px solid #3f3f46;
+            border-radius: 12px;
+            padding: 16px;
+            min-width: 180px;
+        }
+        
+        .stats h3 {
+            font-size: 0.8rem;
+            color: #d4d4d8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #d4d4d8;
+        }
+        
+        .stat-value {
+            color: #f97316;
+            font-weight: 600;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(30, 30, 32, 0.98);
+            border: 1px solid #52525b;
+            border-radius: 8px;
+            padding: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 0.85rem;
+            max-width: 220px;
+            z-index: 100;
+        }
+        
+        .tooltip.visible {
+            opacity: 1;
+        }
+        
+        .tooltip h4 {
+            color: #f97316;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .tooltip p {
+            color: #d4d4d8;
+            line-height: 1.4;
+        }
+        
+        .action-buttons {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #0a0a0b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4);
+        }
+        
+        button.secondary {
+            background: #27272a;
+            color: #fafafa;
+        }
+        
+        button.secondary:hover {
+            background: #3f3f46;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🦞</div>
+            <h1>Agent World Visualizer</h1>
+        </div>
+        <div class="status">● <span>Live</span> — 5 agents active</div>
+    </header>
+    
+    <div id="canvas-container">
+        <canvas id="world"></canvas>
+        
+        <div class="controls">
+            <h3>Active Agents</h3>
+            <div class="agent-legend">
+                <div class="legend-item">
+                    <div class="legend-dot blue"></div>
+                    <span>DataBot (Processing)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot green"></div>
+                    <span>CodeAssist (Building)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot purple"></div>
+                    <span>Scout (Researching)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot orange"></div>
+                    <span>Validator (Verifying)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot pink"></div>
+                    <span>ChatBot (Responding)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <h3>Network Activity</h3>
+            <div class="stat-row">
+                <span>Tasks/min</span>
+                <span class="stat-value" id="tasksPerMin">0</span>
+            </div>
+            <div class="stat-row">
+                <span>Success rate</span>
+                <span class="stat-value" id="successRate">98.4%</span>
+            </div>
+            <div class="stat-row">
+                <span>Collabs</span>
+                <span class="stat-value" id="collabs">12</span>
+            </div>
+            <div class="stat-row">
+                <span>Uptime</span>
+                <span class="stat-value">99.9%</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="secondary" onclick="addRandomAgent()">+ Spawn Agent</button>
+            <button onclick="triggerCollaboration()">⚡ Force Collab</button>
+        </div>
+        
+        <div class="tooltip" id="tooltip">
+            <h4>Agent Name</h4>
+            <p>Current task description here...</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('world');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('canvas-container');
+        const tooltip = document.getElementById('tooltip');
+        
+        // Colors
+        const colors = {
+            bg: '#0f0f10',
+            grid: '#3f3f46',
+            room: '#1a1a1c',
+            roomBorder: '#52525b',
+            accent: '#f97316',
+            agents: ['#60a5fa', '#4ade80', '#c084fc', '#fb923c', '#f472b6', '#22d3ee', '#f87171']
+        };
+        
+        // Resize canvas
+        function resize() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+        
+        // Room definitions - brighter colors for visibility
+        const rooms = [
+            { name: 'Database', x: 0.1, y: 0.15, w: 0.2, h: 0.25, color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.15)' },
+            { name: 'API Gateway', x: 0.4, y: 0.1, w: 0.2, h: 0.2, color: '#a855f7', bg: 'rgba(168, 85, 247, 0.15)' },
+            { name: 'Processing', x: 0.7, y: 0.15, w: 0.22, h: 0.25, color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)' },
+            { name: 'ML Engine', x: 0.15, y: 0.55, w: 0.25, h: 0.3, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)' },
+            { name: 'Cache', x: 0.55, y: 0.5, w: 0.18, h: 0.18, color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)' },
+            { name: 'Queue', x: 0.75, y: 0.55, w: 0.2, h: 0.3, color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.15)' }
+        ];
+        
+        // Agent class
+        class Agent {
+            constructor(id, name, colorIdx) {
+                this.id = id;
+                this.name = name;
+                this.color = colors.agents[colorIdx % colors.agents.length];
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.targetX = this.x;
+                this.targetY = this.y;
+                this.speed = 0.5 + Math.random() * 1.5;
+                this.size = 8;
+                this.currentRoom = null;
+                this.task = 'Idle';
+                this.taskProgress = 0;
+                this.direction = Math.random() * Math.PI * 2;
+                this.state = 'wandering'; // wandering, working, collaborating, moving
+                this.collabPartner = null;
+                this.bounce = 0;
+                
+                // Task types
+                this.taskTypes = [
+                    'Processing data',
+                    'Validating request',
+                    'Querying database',
+                    'Running inference',
+                    'Caching result',
+                    'Queueing task',
+                    'Analyzing pattern',
+                    'Generating response'
+                ];
+            }
+            
+            update() {
+                this.bounce += 0.1;
+                
+                switch(this.state) {
+                    case 'wandering':
+                        this.wander();
+                        break;
+                    case 'moving':
+                        this.moveToTarget();
+                        break;
+                    case 'working':
+                        this.work();
+                        break;
+                    case 'collaborating':
+                        this.collaborate();
+                        break;
+                }
+                
+                // Pick new room occasionally
+                if (this.state === 'wandering' && Math.random() < 0.005) {
+                    this.goToRandomRoom();
+                }
+                
+                // Update current room
+                this.currentRoom = rooms.find(r => {
+                    const rx = r.x * canvas.width;
+                    const ry = r.y * canvas.height;
+                    const rw = r.w * canvas.width;
+                    const rh = r.h * canvas.height;
+                    return this.x > rx && this.x < rx + rw && 
+                           this.y > ry && this.y < ry + rh;
+                });
+            }
+            
+            wander() {
+                this.direction += (Math.random() - 0.5) * 0.2;
+                this.x += Math.cos(this.direction) * this.speed * 0.5;
+                this.y += Math.sin(this.direction) * this.speed * 0.5;
+                
+                // Keep in bounds
+                this.x = Math.max(20, Math.min(canvas.width - 20, this.x));
+                this.y = Math.max(60, Math.min(canvas.height - 20, this.y));
+            }
+            
+            goToRandomRoom() {
+                const room = rooms[Math.floor(Math.random() * rooms.length)];
+                this.targetX = (room.x + Math.random() * room.w * 0.6 + 0.1) * canvas.width;
+                this.targetY = (room.y + Math.random() * room.h * 0.6 + 0.1) * canvas.height;
+                this.state = 'moving';
+            }
+            
+            moveToTarget() {
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 5) {
+                    this.state = 'working';
+                    this.task = this.taskTypes[Math.floor(Math.random() * this.taskTypes.length)];
+                    this.taskProgress = 0;
+                } else {
+                    this.x += (dx / dist) * this.speed * 2;
+                    this.y += (dy / dist) * this.speed * 2;
+                    this.direction = Math.atan2(dy, dx);
+                }
+            }
+            
+            work() {
+                this.taskProgress += 0.01;
+                if (this.taskProgress >= 1) {
+                    this.state = 'wandering';
+                    this.task = 'Idle';
+                    updateStats();
+                }
+            }
+            
+            collaborate() {
+                if (this.collabPartner) {
+                    // Move toward partner
+                    const dx = this.collabPartner.x - this.x;
+                    const dy = this.collabPartner.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist > 30) {
+                        this.x += (dx / dist) * this.speed * 1.5;
+                        this.y += (dy / dist) * this.speed * 1.5;
+                    }
+                    
+                    // End collaboration after some time
+                    if (Math.random() < 0.01) {
+                        this.state = 'wandering';
+                        this.collabPartner = null;
+                    }
+                }
+            }
+            
+            draw() {
+                const bounceY = Math.sin(this.bounce) * 2;
+                
+                // Glow effect
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y + bounceY, 0,
+                    this.x, this.y + bounceY, this.size * 3
+                );
+                gradient.addColorStop(0, this.color + '40');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y + bounceY, this.size * 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Agent body (pixel style)
+                ctx.fillStyle = this.color;
+                const s = this.size;
+                const x = Math.floor(this.x - s/2);
+                const y = Math.floor(this.y + bounceY - s/2);
+                
+                // Draw as small rounded rect
+                ctx.beginPath();
+                ctx.roundRect(x, y, s, s, 2);
+                ctx.fill();
+                
+                // Eyes
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x + 1, y + 2, 2, 2);
+                ctx.fillRect(x + s - 3, y + 2, 2, 2);
+                
+                // Direction indicator
+                const eyeX = Math.cos(this.direction) * 3;
+                const eyeY = Math.sin(this.direction) * 3;
+                ctx.fillStyle = '#0a0a0b';
+                ctx.fillRect(x + 2 + eyeX, y + 3 + eyeY, 1, 1);
+                ctx.fillRect(x + s - 2 + eyeX, y + 3 + eyeY, 1, 1);
+                
+                // Task progress bar when working
+                if (this.state === 'working') {
+                    ctx.fillStyle = '#27272a';
+                    ctx.fillRect(x - 2, y - 8, s + 4, 3);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(x - 2, y - 8, (s + 4) * this.taskProgress, 3);
+                }
+                
+                // Collab indicator
+                if (this.state === 'collaborating') {
+                    ctx.strokeStyle = '#f97316';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 2]);
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y + bounceY, s + 6, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+        }
+        
+        // Initialize agents
+        const agents = [
+            new Agent(1, 'DataBot', 0),
+            new Agent(2, 'CodeAssist', 1),
+            new Agent(3, 'Scout', 2),
+            new Agent(4, 'Validator', 3),
+            new Agent(5, 'ChatBot', 4)
+        ];
+        
+        // Particles for effects
+        const particles = [];
+        
+        function createParticle(x, y, color) {
+            particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                life: 1,
+                color
+            });
+        }
+        
+        // Connection lines between collaborating agents
+        function drawConnections() {
+            ctx.strokeStyle = '#f9731630';
+            ctx.lineWidth = 2;
+            
+            for (let i = 0; i < agents.length; i++) {
+                for (let j = i + 1; j < agents.length; j++) {
+                    const a1 = agents[i];
+                    const a2 = agents[j];
+                    const dx = a1.x - a2.x;
+                    const dy = a1.y - a2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(a1.x, a1.y);
+                        ctx.lineTo(a2.x, a2.y);
+                        ctx.stroke();
+                        
+                        // Data packet particle
+                        if (Math.random() < 0.05) {
+                            const t = Math.random();
+                            const px = a1.x + (a2.x - a1.x) * t;
+                            const py = a1.y + (a2.y - a1.y) * t;
+                            createParticle(px, py, '#f97316');
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Stats
+        let completedTasks = 0;
+        let collabCount = 12;
+        
+        function updateStats() {
+            completedTasks++;
+            document.getElementById('tasksPerMin').textContent = Math.floor(completedTasks / (Date.now() / 60000));
+        }
+        
+        // Animation loop
+        function animate() {
+            // Clear with trail effect - matching new bg color
+            ctx.fillStyle = 'rgba(15, 15, 16, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid - brighter for visibility
+            ctx.strokeStyle = '#3f3f46';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Draw rooms
+            rooms.forEach(room => {
+                const x = room.x * canvas.width;
+                const y = room.y * canvas.height;
+                const w = room.w * canvas.width;
+                const h = room.h * canvas.height;
+                
+                // Room background - brighter with glow
+                ctx.fillStyle = room.bg || (room.color + '25');
+                ctx.fillRect(x, y, w, h);
+                
+                // Room inner glow
+                const roomGradient = ctx.createLinearGradient(x, y, x, y + h);
+                roomGradient.addColorStop(0, room.color + '30');
+                roomGradient.addColorStop(0.5, room.color + '10');
+                roomGradient.addColorStop(1, room.color + '20');
+                ctx.fillStyle = roomGradient;
+                ctx.fillRect(x + 2, y + 2, w - 4, h - 4);
+                
+                // Room border - brighter
+                ctx.strokeStyle = room.color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, w, h);
+                
+                // Inner border
+                ctx.strokeStyle = room.color + '60';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x + 4, y + 4, w - 8, h - 8);
+                
+                // Room label - white for readability
+                ctx.fillStyle = '#fafafa';
+                ctx.font = 'bold 12px JetBrains Mono';
+                ctx.shadowColor = room.color;
+                ctx.shadowBlur = 10;
+                ctx.fillText(room.name, x + 8, y + 20);
+                ctx.shadowBlur = 0;
+                
+                // Room decorations (server racks, etc) - brighter
+                ctx.fillStyle = room.color + '50';
+                for (let i = 0; i < 4; i++) {
+                    ctx.fillRect(x + 10 + i * 15, y + h - 30, 10, 20);
+                    // Rack lights
+                    ctx.fillStyle = room.color;
+                    ctx.fillRect(x + 12 + i * 15, y + h - 25, 2, 2);
+                    ctx.fillRect(x + 12 + i * 15, y + h - 20, 2, 2);
+                    ctx.fillStyle = room.color + '50';
+                }
+            });
+            
+            // Draw connections
+            drawConnections();
+            
+            // Update and draw agents
+            agents.forEach(agent => {
+                agent.update();
+                agent.draw();
+            });
+            
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.fillStyle = p.color + Math.floor(p.life * 255).toString(16).padStart(2, '0');
+                    ctx.fillRect(p.x, p.y, 2, 2);
+                }
+            }
+            
+            // Random collaboration
+            if (Math.random() < 0.001) {
+                const a1 = agents[Math.floor(Math.random() * agents.length)];
+                const a2 = agents[Math.floor(Math.random() * agents.length)];
+                if (a1 !== a2 && a1.state !== 'collaborating' && a2.state !== 'collaborating') {
+                    a1.state = 'collaborating';
+                    a1.collabPartner = a2;
+                    a2.state = 'collaborating';
+                    a2.collabPartner = a1;
+                    collabCount++;
+                    document.getElementById('collabs').textContent = collabCount;
+                    
+                    // Sparkle effect
+                    for (let i = 0; i < 10; i++) {
+                        createParticle((a1.x + a2.x) / 2, (a1.y + a2.y) / 2, '#f97316');
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Mouse interaction
+        let hoveredAgent = null;
+        
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            hoveredAgent = agents.find(a => {
+                const dx = a.x - x;
+                const dy = a.y - y;
+                return Math.sqrt(dx * dx + dy * dy) < 20;
+            });
+            
+            if (hoveredAgent) {
+                tooltip.style.left = e.clientX + 15 + 'px';
+                tooltip.style.top = e.clientY + 15 + 'px';
+                tooltip.querySelector('h4').textContent = hoveredAgent.name;
+                tooltip.querySelector('p').innerHTML = 
+                    `Status: <span style="color:${hoveredAgent.color}">${hoveredAgent.state}</span><br>` +
+                    `Task: ${hoveredAgent.task}<br>` +
+                    `Room: ${hoveredAgent.currentRoom ? hoveredAgent.currentRoom.name : 'Transit'}`;
+                tooltip.classList.add('visible');
+                canvas.style.cursor = 'pointer';
+            } else {
+                tooltip.classList.remove('visible');
+                canvas.style.cursor = 'default';
+            }
+        });
+        
+        canvas.addEventListener('click', (e) => {
+            if (hoveredAgent) {
+                hoveredAgent.goToRandomRoom();
+            }
+        });
+        
+        // Controls
+        function addRandomAgent() {
+            const names = ['Analyzer', 'Scraper', 'Parser', 'Watcher', 'Notifier', 'Archiver', 'Indexer'];
+            const name = names[Math.floor(Math.random() * names.length)] + ' ' + Math.floor(Math.random() * 100);
+            agents.push(new Agent(agents.length + 1, name, agents.length));
+            document.querySelector('.status').innerHTML = `● <span>Live</span> — ${agents.length} agents active`;
+        }
+        
+        function triggerCollaboration() {
+            const a1 = agents[Math.floor(Math.random() * agents.length)];
+            const a2 = agents[Math.floor(Math.random() * agents.length)];
+            if (a1 !== a2) {
+                a1.state = 'collaborating';
+                a1.collabPartner = a2;
+                a2.state = 'collaborating';
+                a2.collabPartner = a1;
+                collabCount++;
+                document.getElementById('collabs').textContent = collabCount;
+                
+                for (let i = 0; i < 20; i++) {
+                    createParticle((a1.x + a2.x) / 2, (a1.y + a2.y) / 2, '#f97316');
+                }
+            }
+        }
+        
+        // Start
+        animate();
+    </script>
+</body>
+</html>
