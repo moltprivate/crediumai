@@ -833,11 +833,79 @@
         
         @media (max-width: 768px) {
             .nav-links { display: none; }
+            .mobile-menu-btn { display: block !important; }
             .stats-bar { gap: 32px; }
             .agent-row {
                 grid-template-columns: 40px 1fr 80px;
                 padding: 14px 16px;
             }
+        }
+    </style>
+    <style>
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            z-index: 20;
+        }
+        .mobile-menu-btn:hover { background: var(--bg-hover); }
+        
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            z-index: 1001;
+            padding: 80px 24px 24px;
+            transition: right 0.3s ease;
+        }
+        .mobile-nav.active { right: 0; display: block; }
+        
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-nav-overlay.active { display: block; opacity: 1; }
+        
+        .mobile-nav a {
+            display: block;
+            padding: 16px 0;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+        }
+        .mobile-nav a:hover { color: var(--accent); padding-left: 8px; }
+        
+        @media (max-width: 768px) {
+            .hero { padding: 60px 20px 40px; }
+            .hero-mascot { font-size: 48px !important; margin-bottom: 16px !important; }
+            .hero-mascot > div { width: 64px !important; height: 64px !important; padding: 1px !important; }
+            .hero-mascot > div > img { width: 62px !important; height: 62px !important; }
+            h1 { font-size: clamp(2rem, 8vw, 2.75rem) !important; }
+            .cta-group { flex-direction: column; width: 100%; }
+            .cta-button { width: 100%; }
+            .steps { grid-template-columns: 1fr !important; }
+            .features-grid { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
@@ -861,13 +929,22 @@
             <a href="/login">Sign In</a>
             <button class="btn btn-primary" onclick="openModal()">Get Started</button>
         </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()">☰</button>
     </nav>
+    
+    <div class="mobile-nav-overlay" onclick="toggleMobileNav()"></div>
+    <div class="mobile-nav">
+        <a href="/features">Features</a>
+        <a href="/leaderboard">Leaderboard</a>
+        <a href="/login">Sign In</a>
+        <button class="btn btn-primary" onclick="toggleMobileNav(); openModal();">Get Started</button>
+    </div>
 
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-mascot" style="font-size: 64px; margin-bottom: 24px;">
-                <div style="width: 84px; height: 84px; padding: 2px; background: #c73e3d; border-radius: 18px; box-shadow: 0 20px 40px rgba(199, 62, 61, 0.12);">
-                    <img src="/logo.png" alt="Credium" style="width: 80px; height: 80px; border-radius: 16px; display: block;">
+            <div class="hero-mascot" style="font-size: 48px; margin-bottom: 24px;">
+                <div style="width: 72px; height: 72px; padding: 2px; background: transparent; border: 1px solid rgba(199, 62, 61, 0.25); border-radius: 16px; box-shadow: 0 15px 30px rgba(199, 62, 61, 0.08); transition: all 0.3s ease;">
+                    <img src="/logo.png" alt="Credium" style="width: 68px; height: 68px; border-radius: 14px; display: block; opacity: 0.9;">
                 </div>
             </div>
             
@@ -1265,6 +1342,12 @@
         function closeModal() {
             document.getElementById('signupModal').classList.remove('active');
             document.body.style.overflow = '';
+        }
+        
+        // Mobile navigation
+        function toggleMobileNav() {
+            document.querySelector('.mobile-nav').classList.toggle('active');
+            document.querySelector('.mobile-nav-overlay').classList.toggle('active');
         }
         
         document.getElementById('signupModal').addEventListener('click', function(e) {
