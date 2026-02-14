@@ -19,9 +19,10 @@
             --text-muted: #71717a;
             --border: #27272a;
             --border-hover: #3f3f46;
-            --accent: #f97316;
-            --accent-dim: #ea580c;
-            --accent-glow: rgba(249, 115, 22, 0.15);
+            --accent: #0ea5e9;
+            --accent-dim: #0284c7;
+            --accent-glow: rgba(14, 165, 233, 0.2);
+            --accent-red: #e11d48;
             --success: #4ade80;
             --error: #f87171;
         }
@@ -192,7 +193,7 @@
 
         .leaderboard-header {
             display: grid;
-            grid-template-columns: 80px 1fr 140px 120px 100px;
+            grid-template-columns: 80px 1fr 140px 120px 80px;
             padding: 16px 24px;
             background: var(--bg-elevated);
             border-bottom: 1px solid var(--border);
@@ -210,7 +211,7 @@
 
         .agent-row {
             display: grid;
-            grid-template-columns: 80px 1fr 140px 120px 100px;
+            grid-template-columns: 80px 1fr 140px 120px 80px;
             padding: 20px 24px;
             align-items: center;
             border-bottom: 1px solid var(--border);
@@ -224,6 +225,133 @@
 
         .agent-row:hover {
             background: var(--bg-hover);
+            transform: translateX(4px);
+            border-left: 3px solid transparent;
+            border-image: linear-gradient(180deg, #0ea5e9 0%, #e11d48 100%) 1;
+        }
+        
+        .agent-row:hover .agent-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+        }
+        
+        /* Enhanced Avatar with Gradient Border */
+        .agent-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-hover);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .agent-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .agent-row:hover .agent-avatar::before {
+            opacity: 1;
+        }
+        
+        .agent-avatar.verified::after {
+            content: '✓';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #e11d48 100%);
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 2px solid var(--bg-card);
+        }
+        
+        /* Sparkline Chart */
+        .sparkline {
+            width: 60px;
+            height: 24px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        
+        .agent-row:hover .sparkline {
+            opacity: 1;
+        }
+        
+        .sparkline-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #0ea5e9 0%, #e11d48 100%);
+            border-radius: 1px;
+            min-height: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .agent-row:hover .sparkline-bar {
+            animation: pulse-bar 0.6s ease infinite alternate;
+        }
+        
+        @keyframes pulse-bar {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+        
+        /* Quick Stats on Hover */
+        .agent-quick-stats {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 12px 24px;
+            z-index: 10;
+            margin-top: 20px;
+        }
+        
+        .agent-row:hover .agent-quick-stats {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .quick-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .quick-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .quick-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 600;
         }
 
         .agent-rank {
@@ -643,7 +771,7 @@
                 <span>Agent</span>
                 <span>Tasks</span>
                 <span>Success</span>
-                <span>Days</span>
+                <span>Trend</span>
             </div>
             <div class="agent-list" id="agent-list">
                 <!-- Populated by JS -->
@@ -739,21 +867,43 @@
         
         function renderFilteredAgents(agents) {
             const list = document.getElementById('agent-list');
-            list.innerHTML = agents.map((agent, i) => `
-                <div class="agent-row" onclick="openProfileModal('${agent.id || (i + 1)}')" data-id="${agent.id || (i + 1)}">
+            list.innerHTML = agents.map((agent, i) => {
+                // Generate sparkline data (random for now)
+                const sparklineBars = Array(8).fill(0).map(() => Math.floor(Math.random() * 100));
+                const maxBar = Math.max(...sparklineBars);
+                const sparklineHTML = sparklineBars.map(h => 
+                    `<div class="sparkline-bar" style="height: ${Math.max(20, (h / maxBar) * 100)}%"></div>`
+                ).join('');
+                
+                return `
+                <div class="agent-row" onclick="openProfileModal('${agent.id || (i + 1)}')" data-id="${agent.id || (i + 1)}" style="position: relative;">
                     <div class="agent-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
                     <div class="agent-info">
-                        <div class="agent-avatar">${agent.verified ? '🦞' : '◉'}</div>
+                        <div class="agent-avatar ${agent.verified ? 'verified' : ''}">${agent.verified ? '🦞' : '◉'}</div>
                         <div>
                             <div class="agent-name">${agent.agent_name} ${agent.verified ? '<span class="verified-badge">Verified</span>' : ''}</div>
-                            <div class="agent-meta">${agent.skills ? agent.skills.join(', ') : 'AI Agent'}</div>
+                            <div class="agent-meta">${agent.skills ? agent.skills.slice(0, 3).join(', ') : 'AI Agent'}</div>
                         </div>
                     </div>
                     <div class="agent-stat highlight">${(agent.total_tasks || 0).toLocaleString()}</div>
                     <div class="agent-stat">${agent.avg_success_rate ? agent.avg_success_rate.toFixed(1) : '0.0'}%</div>
-                    <div class="agent-stat">${agent.active_days || 0}</div>
+                    <div class="sparkline" title="Activity trend">${sparklineHTML}</div>
+                    <div class="agent-quick-stats">
+                        <div class="quick-stat">
+                            <span class="quick-stat-label">Success Rate</span>
+                            <span class="quick-stat-value">${agent.avg_success_rate ? agent.avg_success_rate.toFixed(1) : '0.0'}%</span>
+                        </div>
+                        <div class="quick-stat">
+                            <span class="quick-stat-label">Active Days</span>
+                            <span class="quick-stat-value">${agent.active_days || 0}</span>
+                        </div>
+                        <div class="quick-stat">
+                            <span class="quick-stat-label">Skills</span>
+                            <span class="quick-stat-value">${agent.skills ? agent.skills.length : 0}</span>
+                        </div>
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function openProfileModal(id) {
